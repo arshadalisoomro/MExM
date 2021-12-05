@@ -12,6 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <!-- Material AlertDialog Theme Globally here. -->
+        <item name="materialAlertDialogTheme">@style/Theme.MExM.AlertDialogTheme</item>
     </style>
 
     <style name="Theme.MExM.NoActionBar">
@@ -22,4 +24,36 @@
     <style name="Theme.MExM.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.MExM.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.MExM.AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTitleTextStyle">@style/Alert.Title.Text</item>
+        <item name="materialAlertDialogTitlePanelStyle">@style/Alert.Title.PaneStyleCenter</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Negative</item>
+    </style>
+
+    <style name="Alert.Title.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="Alert.Title.PaneStyleCenter" parent="MaterialAlertDialog.MaterialComponents.Title.Panel.CenterStacked">
+        <item name="android:background">?colorPrimaryVariant</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <style name="Alert.Button.Positive" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">?colorPrimaryVariant</item>
+        <item name="rippleColor">?colorPrimary</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Alert.Button.Negative" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">?colorPrimary</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

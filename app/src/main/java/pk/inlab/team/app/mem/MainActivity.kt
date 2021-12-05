@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListene
         val inputAlertDialogView = LayoutInflater.from(this)
             .inflate(R.layout.input_purchase_item, null, false)
 
+        // ContextThemeWrapper(this, R.style.AlertDialogTheme)
         MaterialAlertDialogBuilder(this)
             .setCancelable(false)
             .setTitle(resources.getString(R.string.new_item))
@@ -92,8 +93,7 @@ class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListene
             }
             .setNegativeButton(resources.getString(R.string.cancel))
             {  /*dialog*/ _ , /*which*/ _ ->
-                Snackbar.make(rootView, "Cancel clicked", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                // Just Placeholder
             }
             .show()
     }
