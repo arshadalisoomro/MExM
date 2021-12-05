@@ -12,7 +12,7 @@ import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class CurrentFragment : Fragment() {
+class CurrentMonthFragment : Fragment() {
 
     private var _binding: FragmentCurrentBinding? = null
 
