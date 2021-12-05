@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import androidx.fragment.app.DialogFragment
 import pk.inlab.team.app.mem.R
 
@@ -24,6 +25,7 @@ class InputDialogFragment(private val title: String) : DialogFragment() {
     ): View {
         savedInstanceState?.putString(DIALOG_TITLE, title)
         // Inflate the layout to use as dialog or embedded fragment
+        dialog?.setTitle(title)
         return inflater.inflate(R.layout.purchase_item, container, false)
     }
 
@@ -34,7 +36,7 @@ class InputDialogFragment(private val title: String) : DialogFragment() {
         // title by default, but your custom layout might not need it. So here you can
         // remove the dialog title, but you must call the superclass to get the Dialog.
         val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setTitle(savedInstanceState?.getString(DIALOG_TITLE))
+
         return dialog
     }
 }
