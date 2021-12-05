@@ -2,8 +2,10 @@ package pk.inlab.team.app.mem
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
@@ -12,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import pk.inlab.team.app.mem.databinding.ActivityMainBinding
 import pk.inlab.team.app.mem.ui.views.InputDialogFragment
@@ -20,13 +23,15 @@ class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListene
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var rootView: View
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        rootView = binding.root
+        setContentView(rootView)
 
         setSupportActionBar(binding.toolbar)
 
@@ -40,9 +45,7 @@ class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListene
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener {
-            showDialog()
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
+            showInputDialog()
         }
     }
 
@@ -68,13 +71,31 @@ class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListene
                 || super.onSupportNavigateUp()
     }
 
-    private fun showDialog() {
-        val fragmentManager = supportFragmentManager
-        val inputDialogFragment = InputDialogFragment(getString(R.string.new_item))
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
 
-        inputDialogFragment.show(fragmentManager, "dialog")
+    }
 
+    private fun showInputDialog() {
+        // Inflate Custom alert dialog view
+        val inputAlertDialogView = LayoutInflater.from(this)
+            .inflate(R.layout.input_purchase_item, null, false)
 
+        MaterialAlertDialogBuilder(this)
+            .setCancelable(false)
+            .setTitle(resources.getString(R.string.new_item))
+            .setView(inputAlertDialogView)
+            .setPositiveButton(resources.getString(R.string.save))
+            { /*dialog*/ _ , /*which*/ _ ->
+                Snackbar.make(rootView, "Save clicked", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
+            .setNegativeButton(resources.getString(R.string.cancel))
+            {  /*dialog*/ _ , /*which*/ _ ->
+                Snackbar.make(rootView, "Cancel clicked", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
+            .show()
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {

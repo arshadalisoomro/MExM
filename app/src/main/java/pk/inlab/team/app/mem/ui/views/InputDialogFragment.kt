@@ -57,7 +57,7 @@ class InputDialogFragment(private val title: String) : DialogFragment() {
         // remove the dialog title, but you must call the superclass to get the Dialog.
         val inflater = LayoutInflater.from(context)
         // Inflate the layout to use as dialog or embedded fragment
-        val view = inflater.inflate(R.layout.purchase_item, null, false)
+        val view = inflater.inflate(R.layout.input_purchase_item, null, false)
 
         // Build the dialog and set up the button click handlers
         var builder: AlertDialog.Builder? = null

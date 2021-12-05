@@ -6,22 +6,22 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_dialog_item_input"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:hint="@string/weight"
-        android:imeOptions="actionDone"
-        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:inputType="number" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -34,25 +34,22 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:hint="@string/description"
-        android:imeOptions="actionDone"
-        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_dialog_item_input">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="200dp"        android:layout_centerHorizontal="true"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
             android:gravity="start"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="textMultiLine|textCapSentences"
-            android:maxLines="5"
+            android:maxLines="3"
             android:minLines="2"
             android:textAlignment="viewStart" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
