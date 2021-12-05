@@ -3,26 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/nav_current">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="pk.inlab.team.app.mem.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        android:id="@+id/nav_current"
+        android:name="pk.inlab.team.app.mem.ui.current.CurrentFragment"
+        android:label="@string/current_fragment_label"
+        tools:layout="@layout/fragment_current">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_CurrentFragment_to_HistoryFragment"
+            app:destination="@id/nav_history" />
     </fragment>
+
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="pk.inlab.team.app.mem.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/nav_history"
+        android:name="pk.inlab.team.app.mem.ui.history.HistoryFragment"
+        android:label="@string/history_fragment_label"
+        tools:layout="@layout/fragment_history">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_HistoryFragment_to_CurrentFragment"
+            app:destination="@id/nav_current" />
     </fragment>
 </navigation>
