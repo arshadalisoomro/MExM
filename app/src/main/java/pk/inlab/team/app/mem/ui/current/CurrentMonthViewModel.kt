@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 class CurrentMonthViewModel : ViewModel() {
 
     private val _texts = MutableLiveData<List<String>>().apply {
-        value = (1..16).mapIndexed { _, i ->
+        value = (1..60).mapIndexed { _, i ->
             "Item # $i"
         }
     }
