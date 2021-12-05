@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import pk.inlab.team.app.mem.R
+import androidx.fragment.app.viewModels
+import pk.inlab.team.app.mem.adapter.CurrentMonthAdapter
 import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
 
 /**
@@ -14,6 +14,7 @@ import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
  */
 class CurrentMonthFragment : Fragment() {
 
+    private val currentMonthViewModel: CurrentMonthViewModel by viewModels()
     private var _binding: FragmentCurrentBinding? = null
 
     // This property is only valid between onCreateView and
@@ -26,16 +27,22 @@ class CurrentMonthFragment : Fragment() {
     ): View {
 
         _binding = FragmentCurrentBinding.inflate(inflater, container, false)
-        return binding.root
+        val root: View = binding.root
+
+        val recyclerView = binding.recyclerviewCurrent
+
+        val adapter = CurrentMonthAdapter()
+        recyclerView.adapter = adapter
+        currentMonthViewModel.texts.observe(viewLifecycleOwner, {
+            adapter.submitList(it)
+        })
+        return root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_CurrentFragment_to_HistoryFragment)
-        }
     }
 
     override fun onDestroyView() {
