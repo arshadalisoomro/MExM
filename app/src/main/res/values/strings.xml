@@ -12,4 +12,7 @@
     <string name="add_new_milk_expense_entry">Add new Milk Expense Entry</string>
     <string name="pao">Pao</string>
     <string name="date">Date</string>
+    <string name="weight">Weight</string>
+    <string name="new_item">New Item</string>
+    <string name="description">Description</string>
 </resources>
