@@ -1,13 +1,11 @@
 package pk.inlab.team.app.mem
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,9 +15,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import pk.inlab.team.app.mem.databinding.ActivityMainBinding
-import pk.inlab.team.app.mem.ui.views.InputDialogFragment
 
-class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -71,11 +68,6 @@ class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListene
                 || super.onSupportNavigateUp()
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-
-    }
-
     private fun showInputDialog() {
         // Inflate Custom alert dialog view
         val inputAlertDialogView = LayoutInflater.from(this)
@@ -98,19 +90,4 @@ class MainActivity : AppCompatActivity(), InputDialogFragment.InputDialogListene
             .show()
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment) {
-        Log.e("CLICK", "Save")
-        dialog.view?.let {
-            Snackbar.make(it, "Save clicked", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-    }
-
-    override fun onDialogNegativeClick(dialog: DialogFragment) {
-        Log.e("CLICK", "Cancel")
-        dialog.view?.let {
-            Snackbar.make(it, "Cancel clicked", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-    }
 }
