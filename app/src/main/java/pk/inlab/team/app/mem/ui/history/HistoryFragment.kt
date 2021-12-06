@@ -33,7 +33,7 @@ class HistoryFragment : Fragment() {
         val adapter = HistoryAdapter()
         recyclerView.adapter = adapter
         // Set values to RV
-        historyViewModel.dataItems.observe(viewLifecycleOwner, {
+        historyViewModel.texts.observe(viewLifecycleOwner, {
             adapter.submitList(it)
         })
 
