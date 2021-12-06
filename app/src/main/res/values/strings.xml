@@ -17,4 +17,6 @@
     <string name="description">Description</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="month_header">Month Header</string>
+    <string name="action_history">History</string>
 </resources>
