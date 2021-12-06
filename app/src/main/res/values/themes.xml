@@ -14,6 +14,9 @@
         <!-- Customize your theme here. -->
         <!-- Material AlertDialog Theme Globally here. -->
         <item name="materialAlertDialogTheme">@style/Theme.MExM.AlertDialogTheme</item>
+        <!-- Digital Fonts Globally here. -->
+        <item name="android:fontFamily">@font/digital_mono</item>
+        <item name="fontFamily">@font/digital_mono</item>
     </style>
 
     <style name="Theme.MExM.NoActionBar">
