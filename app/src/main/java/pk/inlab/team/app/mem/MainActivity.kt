@@ -14,8 +14,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import pk.inlab.team.app.mem.databinding.ActivityMainBinding
+import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -75,22 +75,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showInputDialog() {
-        // Inflate Custom alert dialog view
-        val inputAlertDialogView = LayoutInflater.from(this)
-            .inflate(R.layout.input_purchase_item, null, false)
+        // Through bindings
+        val binding = InputPurchaseItemBinding.inflate(LayoutInflater.from(this))
 
-        // Get Views
-        val title = inputAlertDialogView.findViewById(R.id.til_dialog_item_title) as TextInputEditText
-        val description = inputAlertDialogView.findViewById(R.id.til_dialog_item_description) as TextInputEditText
+        // Get View from binding
+        val inputAlertDialogView = binding.root
 
-        // ContextThemeWrapper(this, R.style.AlertDialogTheme)
         MaterialAlertDialogBuilder(this)
             .setCancelable(false)
             .setTitle(resources.getString(R.string.new_item))
             .setView(inputAlertDialogView)
             .setPositiveButton(resources.getString(R.string.save))
             { /*dialog*/ _ , /*which*/ _ ->
-                Snackbar.make(rootView, "You entered = ${title.text} and ${description.text}", Snackbar.LENGTH_LONG)
+                Snackbar.make(rootView, "You entered = ${binding.tilDialogItemTitle.text} and ${binding.tilDialogItemDescription.text}", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
             }
             .setNegativeButton(resources.getString(R.string.cancel))
