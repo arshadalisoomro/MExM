@@ -29,6 +29,6 @@ class CurrentMonthAdapter :
 
         inner class CurrentMonth(binding: ItemCurrentBinding) :
             RecyclerView.ViewHolder(binding.root) {
-            val textView: MaterialTextView = binding.textViewItemCurrent
+            val textView: MaterialTextView = binding.tvItemValue
         }
     }
