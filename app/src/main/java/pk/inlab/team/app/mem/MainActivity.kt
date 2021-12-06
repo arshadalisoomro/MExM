@@ -1,12 +1,14 @@
 package pk.inlab.team.app.mem
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import pk.inlab.team.app.mem.databinding.ActivityMainBinding
 import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
+import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 
 class MainActivity : AppCompatActivity() {
 
@@ -60,11 +63,19 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_history -> {
                 findNavController(R.id.nav_host_fragment_content_main)
-                    .navigate(R.id.action_CurrentFragment_to_HistoryFragment)
+                    .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToHistoryFragment())
                 return true
             }
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+    private val clickTag = "__click__"
+    fun NavController.safeNavigate(direction: NavDirections) {
+        Log.d(clickTag, "Click happened")
+        currentDestination?.getAction(direction.actionId)?.run {
+            Log.d(clickTag, "Click Propagated")
+            navigate(direction)
         }
     }
 
