@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_history -> {
+
                 findNavController(R.id.nav_host_fragment_content_main)
                     .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToHistoryFragment())
                 return true
