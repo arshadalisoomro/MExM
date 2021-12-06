@@ -1,7 +1,6 @@
 package pk.inlab.team.app.mem
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -62,20 +61,18 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_history -> {
-
                 findNavController(R.id.nav_host_fragment_content_main)
                     .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToHistoryFragment())
+
                 return true
             }
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
-    private val clickTag = "__click__"
-    fun NavController.safeNavigate(direction: NavDirections) {
-        Log.d(clickTag, "Click happened")
+
+    private fun NavController.safeNavigate(direction: NavDirections) {
         currentDestination?.getAction(direction.actionId)?.run {
-            Log.d(clickTag, "Click Propagated")
             navigate(direction)
         }
     }
