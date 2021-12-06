@@ -41,6 +41,22 @@ class MainActivity : AppCompatActivity() {
 
         navController = navHostFragment.navController
 
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            run {
+                val currentFragment = destination.id
+
+                if (currentFragment == R.id.nav_current) {
+                    // Show Fab on Current Month fragment
+                    binding.fab.visibility = View.VISIBLE
+                }
+
+                if (currentFragment == R.id.nav_history) {
+                    // Hide Fab on History fragment
+                    binding.fab.visibility = View.GONE
+                }
+            }
+        }
+
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
