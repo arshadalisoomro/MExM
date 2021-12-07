@@ -31,9 +31,9 @@ class CurrentMonthFragment : Fragment() {
 
         val recyclerView = binding.recyclerviewCurrent
 
-        val adapter = CurrentMonthAdapter()
+        val adapter = CurrentMonthAdapter(root)
         recyclerView.adapter = adapter
-        currentMonthViewModel.texts.observe(viewLifecycleOwner, {
+        currentMonthViewModel.purchaseItems.observe(viewLifecycleOwner, {
             adapter.submitList(it)
         })
         return root
