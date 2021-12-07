@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llc_history_status_container"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="10dp"
+    android:background="?attr/selectableItemBackground">
+
+    <!--  In favour of https://controlc.com/87e1a7d0  -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/mtv_milk_total_month_expense"
+        style="@style/TextAppearance.AppCompat.Headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
+        tools:text="2,215.13"
+        android:textSize="@dimen/history_total_font_size"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/mtv_milk_expense_month_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2,215.13"
+        android:textSize="@dimen/history_total_weight_font_size"
+        android:layout_margin="7dp"/>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_milk_month_total_paos"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textSize="@dimen/history_total_weight_font_size"
+            tools:text="2,215.13"
+            android:gravity="center_horizontal"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_milk_month_total_kilos"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textSize="@dimen/history_total_weight_font_size"
+            tools:text="2,215.13"
+            android:gravity="center_horizontal" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,6 +1,6 @@
 package pk.inlab.team.app.mem.model
 
-data class Purchase(
+data class PurchaseItem(
         var purchaseId: String,
         val purchaseTimeMilli: Long = System.currentTimeMillis(),
         var purchaseWeight: Int,

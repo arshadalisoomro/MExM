@@ -2,5 +2,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="item_transform_image_length">48dp</dimen>
     <dimen name="current_total_font_size">70sp</dimen>
+    <dimen name="history_total_font_size">28sp</dimen>
     <dimen name="current_total_weight_font_size">26sp</dimen>
+    <dimen name="history_total_weight_font_size">14sp</dimen>
 </resources>

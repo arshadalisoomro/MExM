@@ -27,7 +27,7 @@
             android:gravity="center_vertical|center_horizontal">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_milk_month_expense"
+                android:id="@+id/mtv_milk_total_month_expense"
                 style="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:textSize="@dimen/current_total_font_size"/>
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_milk_month_year"
+                android:id="@+id/mtv_milk_expense_month_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="7dp"
@@ -51,7 +51,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_milk_month_paos"
+                    android:id="@+id/mtv_milk_month_total_paos"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                     android:gravity="center_horizontal"/>
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_milk_month_kilos"
+                    android:id="@+id/mtv_milk_month_total_kilos"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
