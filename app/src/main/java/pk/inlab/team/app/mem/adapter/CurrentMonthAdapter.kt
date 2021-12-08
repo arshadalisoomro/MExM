@@ -22,8 +22,8 @@ import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.databinding.CurrentItemInfoBinding
 import pk.inlab.team.app.mem.databinding.ItemCurrentBinding
 import pk.inlab.team.app.mem.model.PurchaseItem
-import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDateMonth
 import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDateMonthYear
+import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDayDate
 import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToTime
 
 class CurrentMonthAdapter(private val rootView: View) :
@@ -45,7 +45,7 @@ class CurrentMonthAdapter(private val rootView: View) :
             val context = rootView.context
             val item = getItem(position)
             holder.itemWeightInPaos.text = item.purchaseWeight.toString()
-            holder.itemPurchaseDate.text = convertLongToDateMonth(item.purchaseTimeMilli)
+            holder.itemPurchaseDate.text = convertLongToDayDate(item.purchaseTimeMilli)
 
             // Click listener to show Info
             holder.itemContainer.setOnClickListener {

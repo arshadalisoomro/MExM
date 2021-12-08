@@ -52,6 +52,9 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
     implementation "io.reactivex.rxjava2:rxjava:2.2.9"
 
+    // Grid Layout Item divider
+    implementation "com.bignerdranch.android:simple-item-decoration:1.0.0"
+
     testImplementation 'junit:junit:4.+'
     
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -23,7 +23,7 @@
             android:id="@+id/llc_current_status_container"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="150dp"
             android:layout_marginBottom="@dimen/current_status_container_bottom_margin"
             android:gravity="center_vertical|center_horizontal">
 
