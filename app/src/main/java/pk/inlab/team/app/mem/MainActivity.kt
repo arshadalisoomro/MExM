@@ -22,6 +22,7 @@ import pk.inlab.team.app.mem.databinding.ActivityMainBinding
 import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
 import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER_KILO
+import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
 
 class MainActivity : AppCompatActivity() {
@@ -77,9 +78,12 @@ class MainActivity : AppCompatActivity() {
             showInputDialog()
         }
 
-        // Init Prefs
+        // Init Prefs Live Change is observed
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         liveSharedPreferences = LiveSharedPreferences(preferences)
+
+        // Set Current Month and Year
+        binding.mtvMilkExpenseMonthYear.text = DateUtils.getToday()
 
     }
 

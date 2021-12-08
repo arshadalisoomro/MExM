@@ -21,5 +21,6 @@
 
     <dimen name="vertical_gutters_half">12dp</dimen>
     <dimen name="vertical_gutters">24dp</dimen>
+    <dimen name="current_status_container_bottom_margin">28dp</dimen>
 
 </resources>

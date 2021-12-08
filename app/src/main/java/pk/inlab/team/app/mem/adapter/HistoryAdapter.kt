@@ -22,7 +22,7 @@ import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.databinding.HistoryItemInfoBinding
 import pk.inlab.team.app.mem.databinding.ItemHistoryBinding
 import pk.inlab.team.app.mem.model.PurchaseItem
-import pk.inlab.team.app.mem.utils.Utils
+import pk.inlab.team.app.mem.utils.DateUtils
 
 class HistoryAdapter(private val rootView: View):
     ListAdapter<PurchaseItem, HistoryAdapter.History>(object : DiffUtil.ItemCallback<PurchaseItem>() {
@@ -66,7 +66,7 @@ class HistoryAdapter(private val rootView: View):
         val binding = HistoryItemInfoBinding.inflate(LayoutInflater.from(context))
 
         // Time format
-        val time = Utils.convertLongToTime(item.purchaseTimeMilli)
+        val time = DateUtils.convertLongToTime(item.purchaseTimeMilli)
 
         // Get View from binding
         val infoDialogView = binding.root
@@ -81,7 +81,7 @@ class HistoryAdapter(private val rootView: View):
         binding.mtvHistoryItemInfoDescription.text = item.purchaseDescription
 
         // Date format
-        val dateMonthYear = Utils.convertLongToDateMonthYear(item.purchaseTimeMilli)
+        val dateMonthYear = DateUtils.convertLongToDateMonthYear(item.purchaseTimeMilli)
 
         MaterialAlertDialogBuilder(context)
             .setCancelable(false)

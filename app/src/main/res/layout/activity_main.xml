@@ -24,6 +24,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="160dp"
+            android:layout_marginBottom="@dimen/current_status_container_bottom_margin"
             android:gravity="center_vertical|center_horizontal">
 
             <com.google.android.material.textview.MaterialTextView
@@ -41,6 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="7dp"
+                android:textSize="@dimen/history_total_font_size"
                 android:textColor="@android:color/white" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -58,6 +60,7 @@
                     android:layout_margin="5dp"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/current_total_weight_font_size"
+                    android:text="Paos: 23"
                     android:gravity="center_horizontal"/>
 
                 <com.google.android.material.textview.MaterialTextView
@@ -68,6 +71,7 @@
                     android:layout_margin="5dp"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/current_total_weight_font_size"
+                    android:text="Kgs: 23"
                     android:gravity="center_horizontal" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
