@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity() {
                     // Hide Fab on History fragment
                     binding.fab.visibility = View.GONE
                 }
+
+                if (currentFragment == R.id.nav_settings) {
+                    // Hide Fab on Settings fragment
+                    binding.fab.visibility = View.GONE
+                }
             }
         }
 
@@ -82,7 +87,11 @@ class MainActivity : AppCompatActivity() {
 
                 return true
             }
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                findNavController(R.id.nav_host_fragment_content_main)
+                    .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToSettingsFragment())
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

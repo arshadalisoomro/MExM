@@ -14,6 +14,10 @@
         <action
             android:id="@+id/action_CurrentFragment_to_HistoryFragment"
             app:destination="@id/nav_history" />
+
+        <action
+            android:id="@+id/action_CurrentFragment_to_SettingsFragment"
+            app:destination="@id/nav_settings" />
     </fragment>
 
     <fragment
@@ -24,6 +28,16 @@
 
         <action
             android:id="@+id/action_HistoryFragment_to_CurrentFragment"
+            app:destination="@id/nav_current" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="pk.inlab.team.app.mem.ui.settings.SettingsFragment"
+        android:label="@string/settings_fragment_label">
+
+        <action
+            android:id="@+id/action_SettingsFragment_to_CurrentFragment"
             app:destination="@id/nav_current" />
     </fragment>
 </navigation>
