@@ -2,6 +2,7 @@ package pk.inlab.team.app.mem
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -21,6 +22,7 @@ import pk.inlab.team.app.mem.databinding.ActivityMainBinding
 import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
 import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER_KILO
+import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +30,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var rootView: View
     private lateinit var navController: NavController
-    private lateinit var sharedPreferences: SharedPreferences
+
+    private lateinit var preferences: SharedPreferences
+    private lateinit var liveSharedPreferences: LiveSharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +42,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(rootView)
 
         setSupportActionBar(binding.toolbar)
-
-        // Init Shared Prefs
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // In favor of androidx.fragment.app.FragmentContainerView in XML file
         val navHostFragment = supportFragmentManager
@@ -75,15 +76,29 @@ class MainActivity : AppCompatActivity() {
         binding.fab.setOnClickListener {
             showInputDialog()
         }
+
+        // Init Prefs
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        liveSharedPreferences = LiveSharedPreferences(preferences)
+
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
         // enter the key from your xml and the default value
-        val ratePerKiloString = sharedPreferences.getString(KEY_RATE_PER_KILO, "-1")
+        liveSharedPreferences
+            .getString(KEY_RATE_PER_KILO, "-1")
+            .observe(this, {
+                getRatePerKiloValueFromPrefs(it)
+                Log.e("#PREFS#", "Current value is = $it")
+            })
+    }
+
+    private fun getRatePerKiloValueFromPrefs(ratePerKiloString: String?) {
         val ratePerKilo = ratePerKiloString?.toInt()
         if (ratePerKilo != null) {
-            binding.mtvMilkTotalMonthExpense.text = (ratePerKilo*12).toString()
+            val totalExpense = (ratePerKilo * 12)
+            binding.mtvMilkTotalMonthExpense.text = "RS.$totalExpense/="
         }
     }
 
