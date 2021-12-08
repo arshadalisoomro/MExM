@@ -8,18 +8,10 @@ import java.util.*
 
 class CurrentMonthViewModel : ViewModel() {
 
-    private val _texts = MutableLiveData<List<String>>().apply {
-        value = (1..60).mapIndexed { _, i ->
-            "Item # $i"
-        }
-    }
-
-    val texts: LiveData<List<String>> = _texts
-
     private val  _purchaseItems = MutableLiveData<List<PurchaseItem>>().apply {
-        value = (1..60).mapIndexed { _, i ->
+        value = (1..30).mapIndexed { _, i ->
             // "Item # $i"
-            PurchaseItem("id$i", Date().time, (23*i), "Some Desc $i")
+            PurchaseItem("id$i", Date().time, (3*i), "Some Desc $i")
         }
     }
 

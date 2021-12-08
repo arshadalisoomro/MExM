@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.PopupMenu
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +22,7 @@ import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.databinding.CurrentItemInfoBinding
 import pk.inlab.team.app.mem.databinding.ItemCurrentBinding
 import pk.inlab.team.app.mem.model.PurchaseItem
+import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDateMonth
 import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDateMonthYear
 import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToTime
 
@@ -43,7 +44,8 @@ class CurrentMonthAdapter(private val rootView: View) :
         override fun onBindViewHolder(holder: CurrentMonth, position: Int) {
             val context = rootView.context
             val item = getItem(position)
-            holder.itemWeight.text = item.purchaseWeight.toString()
+            holder.itemWeightInPaos.text = item.purchaseWeight.toString()
+            holder.itemPurchaseDate.text = convertLongToDateMonth(item.purchaseTimeMilli)
 
             // Click listener to show Info
             holder.itemContainer.setOnClickListener {
@@ -146,8 +148,9 @@ class CurrentMonthAdapter(private val rootView: View) :
     inner class CurrentMonth(binding: ItemCurrentBinding) :
             RecyclerView.ViewHolder(binding.root) {
 
-            val itemContainer: ConstraintLayout = binding.clItemCurrentContainer
+            val itemContainer: LinearLayoutCompat = binding.llcItemCurrentContainer
 
-            val itemWeight: MaterialTextView = binding.mtvItemValue
+            val itemWeightInPaos: MaterialTextView = binding.mtvItemPaos
+            val itemPurchaseDate: MaterialTextView = binding.mtvItemPurchaseDate
         }
     }
