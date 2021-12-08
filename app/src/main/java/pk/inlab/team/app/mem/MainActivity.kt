@@ -24,6 +24,7 @@ import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER_KILO
 import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +35,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var preferences: SharedPreferences
     private lateinit var liveSharedPreferences: LiveSharedPreferences
+
+    // Used for Showing and Hiding menu Items
+    private var isCurrentMonthFragmentVisible by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +54,9 @@ class MainActivity : AppCompatActivity() {
 
         navController = navHostFragment.navController
 
+        // Set true at init state because our init destination is CurrentMonthFragment
+        isCurrentMonthFragmentVisible = true
+
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             run {
                 val currentFragment = destination.id
@@ -57,17 +64,28 @@ class MainActivity : AppCompatActivity() {
                 if (currentFragment == R.id.nav_current) {
                     // Show Fab on Current Month fragment
                     binding.fab.visibility = View.VISIBLE
+
+                    // Set true
+                    isCurrentMonthFragmentVisible = true
                 }
 
                 if (currentFragment == R.id.nav_history) {
                     // Hide Fab on History fragment
                     binding.fab.visibility = View.GONE
+
+                    // Set false
+                    isCurrentMonthFragmentVisible = false
                 }
 
                 if (currentFragment == R.id.nav_settings) {
                     // Hide Fab on Settings fragment
                     binding.fab.visibility = View.GONE
+
+                    // Set false
+                    isCurrentMonthFragmentVisible = false
                 }
+
+
             }
         }
 
@@ -110,6 +128,22 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+
+        val historyMenuItem = menu?.findItem(R.id.action_history)
+        val settingsMenuItem = menu?.findItem(R.id.action_settings)
+
+        return if (!isCurrentMonthFragmentVisible){
+            historyMenuItem?.isVisible = false
+            settingsMenuItem?.isVisible = false
+            true
+        } else {
+            historyMenuItem?.isVisible = true
+            settingsMenuItem?.isVisible = true
+            true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
