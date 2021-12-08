@@ -53,7 +53,6 @@ class CurrentMonthAdapter(private val rootView: View) :
             // Long Click listener to show Edit Delete Popup menu
             holder.itemContainer.setOnLongClickListener {
                 showEditDeletePopUpMenu(rootView, it, R.menu.menu_pop_up)
-
                 return@setOnLongClickListener true
             }
 

@@ -30,7 +30,7 @@ class HistoryFragment : Fragment() {
         val root: View = binding.root
 
         val recyclerView = binding.recyclerviewHistory
-        val adapter = HistoryAdapter()
+        val adapter = HistoryAdapter(root)
         recyclerView.adapter = adapter
         // Set values to RV
         historyViewModel.purchaseItems.observe(viewLifecycleOwner, {
