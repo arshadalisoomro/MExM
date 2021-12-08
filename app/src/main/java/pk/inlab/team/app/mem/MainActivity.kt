@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         val ratePerKilo = ratePerKiloString?.toInt()
         if (ratePerKilo != null) {
             val totalExpense = (ratePerKilo * 12)
-            binding.mtvMilkTotalMonthExpense.text = "RS.$totalExpense/="
+            binding.mtvMilkTotalMonthExpense.text = getString(R.string.total_month_expense, totalExpense)
         }
     }
 

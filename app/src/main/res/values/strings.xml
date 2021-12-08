@@ -24,6 +24,9 @@
     <string name="option_delete">Delete</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
+    <!-- In Favor of total Expense formatted   -->
+    <string name="total_month_expense">RS.%1$d/=</string>
+
     <!-- Preference Titles -->
     <string name="rates_header">Current Rate</string>
 
