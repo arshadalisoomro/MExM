@@ -2,6 +2,7 @@ package pk.inlab.team.app.mem.repository
 
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -17,23 +18,25 @@ class PurchaseRepository {
         FirebaseFirestore.getInstance().collection(Constants.COLLECTION_PURCHASE)
 
     /**
-     * Returns Flow of [State] which retrieves all PurchaseItems from cloud firestore collection.
+     * Returns ProducerScope of [State] which retrieves all PurchaseItems from cloud firestore collection.
      */
     fun getAllItemsRealtime() : Flow<State<List<PurchaseItem>>> = callbackFlow {
 
         // Register listener
-        val listener = mPurchaseItemsCollection.addSnapshotListener { snapshot, exception ->
+        val listener = mPurchaseItemsCollection
+            .orderBy("purchaseTimeMilli", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, exception ->
 
-            if (snapshot != null) {
-                trySend(State.success(snapshot.toObjects(PurchaseItem::class.java)))
-            }
+                if (snapshot != null) {
+                    trySend(State.success(snapshot.toObjects(PurchaseItem::class.java)))
+                }
 
-            // If exception occurs, cancel this scope with exception message.
-            exception?.let {
-                trySend(State.failed(it.message.toString())).isSuccess
-                cancel(it.message.toString())
+                // If exception occurs, cancel this scope with exception message.
+                exception?.let {
+                    trySend(State.failed(it.message.toString())).isSuccess
+                    cancel(it.message.toString())
+                }
             }
-        }
 
         awaitClose {
             // This block is executed when producer channel is cancelled
