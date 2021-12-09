@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "316535365325",
+    "project_id": "mexm-77029",
+    "storage_bucket": "mexm-77029.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316535365325:android:83e26a17fe12b3040f1384",
+        "android_client_info": {
+          "package_name": "pk.inlab.team.app.mem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316535365325-seigq2fngvp2upohc1oii8ihj00umk1a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkxTLc0rOZB1UGBcAJKjkoEWPONou9Nss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "316535365325-seigq2fngvp2upohc1oii8ihj00umk1a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
