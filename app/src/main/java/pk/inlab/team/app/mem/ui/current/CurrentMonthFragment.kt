@@ -1,19 +1,20 @@
 package pk.inlab.team.app.mem.ui.current
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.dgreenhalgh.android.simpleitemdecoration.grid.GridDividerItemDecoration
-import pk.inlab.team.app.mem.R
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import pk.inlab.team.app.mem.adapter.CurrentMonthAdapter
 import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
-
-
-
+import pk.inlab.team.app.mem.utils.State
 
 
 /**
@@ -21,12 +22,15 @@ import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
  */
 class CurrentMonthFragment : Fragment() {
 
-    private val currentMonthViewModel: CurrentMonthViewModel by viewModels()
+    private lateinit var currentMonthViewModel: CurrentMonthViewModel
     private var _binding: FragmentCurrentBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    // Coroutine Scope
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,31 +40,61 @@ class CurrentMonthFragment : Fragment() {
         _binding = FragmentCurrentBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val recyclerView = binding.recyclerviewCurrent
-        // Set Grid Item Divider
-        val horizontalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
-        val verticalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
+        currentMonthViewModel = ViewModelProvider(this, CurrentViewModelFactory())
+            .get(CurrentMonthViewModel::class.java)
 
-        recyclerView.addItemDecoration(
-            GridDividerItemDecoration(
-                horizontalDivider,
-                verticalDivider,
-                3
-            )
-        )
+        val recyclerView = binding.recyclerviewCurrent
+//        // Set Grid Item Divider
+//        val horizontalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
+//        val verticalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
+//
+//        recyclerView.addItemDecoration(
+//            GridDividerItemDecoration(
+//                horizontalDivider,
+//                verticalDivider,
+//                3
+//            )
+//        )
 
         val adapter = CurrentMonthAdapter(root)
         recyclerView.adapter = adapter
-        currentMonthViewModel.purchaseItems.observe(viewLifecycleOwner, {
-            adapter.submitList(it)
-        })
+
+        // Launch coroutine
+        uiScope.launch {
+            loadPosts(root, adapter)
+        }
+
         return root
 
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(root: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(root, savedInstanceState)
 
+
+    }
+
+    private suspend fun loadPosts(root: View, adapter: CurrentMonthAdapter) {
+        currentMonthViewModel.getAllItems().collect {
+            when(it){
+                is State.Loading -> {
+                    showToast(root, "Loading")
+                }
+                is State.Success -> {
+                    Log.e("__DATA__", it.data.toString())
+                    adapter.submitList(it.data)
+                }
+                is State.Failed -> {
+                    Log.e("__DATA__", it.message)
+                    showToast(root, "Failed!")
+                }
+            }
+        }
+
+    }
+
+    private fun showToast(root: View, message: String) {
+        Toast.makeText(root.context, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
