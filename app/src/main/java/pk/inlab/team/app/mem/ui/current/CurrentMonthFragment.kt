@@ -61,21 +61,15 @@ class CurrentMonthFragment : Fragment() {
 
         // Launch coroutine
         uiScope.launch {
-            loadPosts(root, adapter)
+            loadItems(root, adapter)
         }
 
         return root
 
     }
 
-    override fun onViewCreated(root: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(root, savedInstanceState)
-
-
-    }
-
-    private suspend fun loadPosts(root: View, adapter: CurrentMonthAdapter) {
-        currentMonthViewModel.getAllItems().collect {
+    private suspend fun loadItems(root: View, adapter: CurrentMonthAdapter) {
+        currentMonthViewModel.getAllItemsRealTime().collect {
             when(it){
                 is State.Loading -> {
                     showToast(root, "Loading")
