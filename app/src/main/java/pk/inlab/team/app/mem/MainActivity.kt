@@ -1,5 +1,6 @@
 package pk.inlab.team.app.mem
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,7 @@ import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER_KILO
 import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -128,6 +130,10 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> {
                 findNavController(R.id.nav_host_fragment_content_main)
                     .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToSettingsFragment())
+                return true
+            }
+            R.id.action_about -> {
+                startActivity(Intent(this@MainActivity, AboutActivity::class.java))
                 return true
             }
             else -> super.onOptionsItemSelected(item)

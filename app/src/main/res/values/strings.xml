@@ -34,4 +34,6 @@
     <string name="rate_title">Rate per Kilo</string>
 
     <string name="settings_fragment_label">Settings</string>
+    <string name="action_about">About</string>
+    <string name="title_about">About</string>
 </resources>
