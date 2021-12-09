@@ -8,6 +8,7 @@ buildscript {
     }
 
     ext {
+        latestCoroutinesRelease = '1.6.0-RC'
         latestAboutLibsRelease = '8.9.4'
     }
 
