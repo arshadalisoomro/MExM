@@ -19,7 +19,7 @@ class PurchaseRepository {
     /**
      * Returns Flow of [State] which retrieves all PurchaseItems from cloud firestore collection.
      */
-    fun getAllPurchaseItems() = flow<State<List<PurchaseItem>>> {
+    fun getAllItems() = flow<State<List<PurchaseItem>>> {
 
         // Emit loading state
         emit(State.loading())
