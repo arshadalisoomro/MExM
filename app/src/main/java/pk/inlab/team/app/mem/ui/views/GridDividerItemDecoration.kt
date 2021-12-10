@@ -69,14 +69,18 @@ class GridDividerItemDecoration (
     private fun drawHorizontalDividers(canvas: Canvas, parent: RecyclerView) {
         val parentTop = parent.paddingTop
         val parentBottom = parent.height - parent.paddingBottom
-
-        for (i in 0 until mNumColumns!!) {
-            val child = parent.getChildAt(i)
-            val params = child.layoutParams as RecyclerView.LayoutParams
-            val parentLeft = child.right + params.rightMargin
-            val parentRight = parentLeft + mHorizontalDivider?.intrinsicWidth!!
-            mHorizontalDivider.setBounds(parentLeft, parentTop, parentRight, parentBottom)
-            mHorizontalDivider.draw(canvas)
+        // In favor of avoiding NullPointer Exception ;-)
+        try {
+            for (i in 0 until mNumColumns!!) {
+                val child = parent.getChildAt(i)
+                val params = child.layoutParams as RecyclerView.LayoutParams
+                val parentLeft = child.right + params.rightMargin
+                val parentRight = parentLeft + mHorizontalDivider?.intrinsicWidth!!
+                mHorizontalDivider.setBounds(parentLeft, parentTop, parentRight, parentBottom)
+                mHorizontalDivider.draw(canvas)
+            }
+        } catch (e: NullPointerException) {
+            // Just placeHolder for catch block
         }
 
     }
