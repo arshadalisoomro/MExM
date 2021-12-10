@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
@@ -19,11 +21,18 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import pk.inlab.team.app.mem.databinding.ActivityMainBinding
 import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
 import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
+import pk.inlab.team.app.mem.ui.current.CurrentMonthViewModel
+import pk.inlab.team.app.mem.ui.current.CurrentViewModelFactory
 import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER_KILO
 import pk.inlab.team.app.mem.utils.DateUtils
+import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
 
 
@@ -36,6 +45,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var preferences: SharedPreferences
     private lateinit var liveSharedPreferences: LiveSharedPreferences
+
+    // Define View Model
+    private lateinit var currentMonthViewModel: CurrentMonthViewModel
+
+    // Coroutine Scope
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         navController = navHostFragment.navController
 
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { /*controller*/ _, destination, /*arguments*/ _ ->
             run {
                 val currentFragment = destination.id
 
@@ -71,7 +86,6 @@ class MainActivity : AppCompatActivity() {
                     binding.fab.visibility = View.GONE
                 }
 
-
             }
         }
 
@@ -86,6 +100,10 @@ class MainActivity : AppCompatActivity() {
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         liveSharedPreferences = LiveSharedPreferences(preferences)
 
+        // Init Current Month ViewModel to fetch data from Collection
+        currentMonthViewModel = ViewModelProvider(this, CurrentViewModelFactory())
+            .get(CurrentMonthViewModel::class.java)
+
         // Set Current Month and Year
         binding.mtvMilkExpenseMonthYear.text = DateUtils.getToday()
 
@@ -93,21 +111,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResumeFragments() {
         super.onResumeFragments()
+        // Launch Coroutine
+        uiScope.launch {
+            loadItems(rootView, getCurrentRateFromPrefs())
+        }
+    }
+
+    private fun getCurrentRateFromPrefs(): Int {
+        // Init Current rate
+        var currentRatePerKilo = 0
+
         // enter the key from your xml and the default value
         liveSharedPreferences
             .getString(KEY_RATE_PER_KILO, "-1")
             .observe(this, {
-                getRatePerKiloValueFromPrefs(it)
+                currentRatePerKilo = it?.toInt()!!
+                // Launch Coroutine
+                uiScope.launch {
+                    loadItems(rootView, currentRatePerKilo)
+                }
                 Log.e("#PREFS#", "Current value is = $it")
             })
-    }
+        return currentRatePerKilo
 
-    private fun getRatePerKiloValueFromPrefs(ratePerKiloString: String?) {
-        val ratePerKilo = ratePerKiloString?.toInt()
-        if (ratePerKilo != null) {
-            val totalExpense = (ratePerKilo * 12)
-            binding.mtvMilkTotalMonthExpense.text = getString(R.string.total_month_expense, totalExpense)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -150,6 +176,39 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    private suspend fun loadItems(root: View, currentRatePerKilo: Int) {
+        currentMonthViewModel.getAllItemsRealTime().collect {
+            when(it){
+                is State.Loading -> {
+                    showToast(root, "Loading")
+                }
+                is State.Success -> {
+                    Log.e("__DATA__", it.data.toString())
+
+                    var totalMonthWeightInPaos = 0
+                    for (item in it.data){
+                        totalMonthWeightInPaos += item.purchaseWeight
+                    }
+
+                    if (currentRatePerKilo >= 0){
+                        val totalMonthExpenseValue = totalMonthWeightInPaos * currentRatePerKilo
+                        // Set Values to views
+                        binding.mtvMilkTotalMonthExpense.text = getString(R.string.total_month_expense, totalMonthExpenseValue)
+                    }
+                }
+                is State.Failed -> {
+                    Log.e("__DATA__", it.message)
+                    showToast(root, "Failed!")
+                }
+            }
+        }
+
+    }
+
+    private fun showToast(root: View, message: String) {
+        Toast.makeText(root.context, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showInputDialog() {
