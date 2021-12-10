@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.dgreenhalgh.android.simpleitemdecoration.grid.GridDividerItemDecoration
 import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.adapter.HistoryAdapter
 import pk.inlab.team.app.mem.databinding.FragmentHistoryBinding
+import pk.inlab.team.app.mem.ui.views.GridDividerItemDecoration
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.

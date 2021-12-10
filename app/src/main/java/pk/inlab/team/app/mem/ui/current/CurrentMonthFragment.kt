@@ -6,14 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.adapter.CurrentMonthAdapter
 import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
+import pk.inlab.team.app.mem.ui.views.GridDividerItemDecoration
 import pk.inlab.team.app.mem.utils.State
 
 
@@ -32,6 +36,9 @@ class CurrentMonthFragment : Fragment() {
     // Coroutine Scope
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
+    // RV globally
+    private lateinit var recyclerView: RecyclerView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,19 +50,9 @@ class CurrentMonthFragment : Fragment() {
         currentMonthViewModel = ViewModelProvider(this, CurrentViewModelFactory())
             .get(CurrentMonthViewModel::class.java)
 
-        val recyclerView = binding.recyclerviewCurrent
-//        // Set Grid Item Divider
-//        val horizontalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
-//        val verticalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
-//
-//        recyclerView.addItemDecoration(
-//            GridDividerItemDecoration(
-//                horizontalDivider,
-//                verticalDivider,
-//                3
-//            )
-//        )
+        recyclerView = binding.recyclerviewCurrent
 
+        // Fetch Data from FireStore using Coroutine
         val adapter = CurrentMonthAdapter(root)
         recyclerView.adapter = adapter
 
@@ -63,9 +60,22 @@ class CurrentMonthFragment : Fragment() {
         uiScope.launch {
             loadItems(root, adapter)
         }
-
         return root
 
+    }
+
+    private fun setGridItemDecorator(recyclerView: RecyclerView) {
+        // Set Grid Item Divider
+        val horizontalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
+        val verticalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
+
+        recyclerView.addItemDecoration(
+            GridDividerItemDecoration(
+                horizontalDivider,
+                verticalDivider,
+                3
+            )
+        )
     }
 
     private suspend fun loadItems(root: View, adapter: CurrentMonthAdapter) {
@@ -77,6 +87,8 @@ class CurrentMonthFragment : Fragment() {
                 is State.Success -> {
                     Log.e("__DATA__", it.data.toString())
                     adapter.submitList(it.data)
+                    // List is not empty or less than 3 items then set setGridItemDecorator
+                    if(it.data.isNotEmpty() && it.data.size > 3) setGridItemDecorator(recyclerView)
                 }
                 is State.Failed -> {
                     Log.e("__DATA__", it.message)
