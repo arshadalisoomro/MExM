@@ -88,8 +88,14 @@ class CurrentMonthFragment : Fragment() {
                     Log.e("__DATA__", it.data.toString())
 
                     adapter.submitList(it.data)
-                    // List is not empty or less than or Equal to 3 items then set setGridItemDecorator
-                    if(it.data.isNotEmpty() && it.data.size >= 3) setGridItemDecorator(recyclerView)
+                    // In favor of avoiding NullPointer Exception ;-)
+                    try {
+                        // List is not empty or less than or Equal to 3 items then set setGridItemDecorator
+                        if(it.data.isNotEmpty() && it.data.size >= 3) setGridItemDecorator(recyclerView)
+                    } catch (e: Exception) {
+
+                    }
+
                 }
                 is State.Failed -> {
                     Log.e("__DATA__", it.message)
