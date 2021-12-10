@@ -86,6 +86,7 @@ class CurrentMonthFragment : Fragment() {
                 }
                 is State.Success -> {
                     Log.e("__DATA__", it.data.toString())
+
                     adapter.submitList(it.data)
                     // List is not empty or less than or Equal to 3 items then set setGridItemDecorator
                     if(it.data.isNotEmpty() && it.data.size >= 3) setGridItemDecorator(recyclerView)

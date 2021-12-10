@@ -1,5 +1,6 @@
 package pk.inlab.team.app.mem.repository
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -11,11 +12,12 @@ import kotlinx.coroutines.tasks.await
 import pk.inlab.team.app.mem.model.PurchaseItem
 import pk.inlab.team.app.mem.utils.Constants
 import pk.inlab.team.app.mem.utils.State
+import pk.inlab.team.app.mem.utils.toObjectsWithId
 
-class PurchaseRepository {
+class PurchaseItemRepository {
 
     private val mPurchaseItemsCollection =
-        FirebaseFirestore.getInstance().collection(Constants.COLLECTION_PURCHASE)
+        FirebaseFirestore.getInstance().collection(Constants.COLLECTION_PURCHASE_ITEM)
 
     /**
      * Returns ProducerScope of [State] which retrieves all PurchaseItems from cloud firestore collection.
@@ -28,7 +30,12 @@ class PurchaseRepository {
             .addSnapshotListener { snapshot, exception ->
 
                 if (snapshot != null) {
-                    trySend(State.success(snapshot.toObjects(PurchaseItem::class.java)))
+                    // snapshot.documentChanges.get
+                    Log.e("DATA_ITEMS", snapshot.documents.toString())
+                    trySend(
+
+                        State.success(snapshot.toObjectsWithId(PurchaseItem::class.java))
+                    )
                 }
 
                 // If exception occurs, cancel this scope with exception message.
