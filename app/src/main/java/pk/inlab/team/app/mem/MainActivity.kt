@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pk.inlab.team.app.mem.databinding.ActivityMainBinding
 import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
+import pk.inlab.team.app.mem.model.PurchaseItem
 import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.current.CurrentMonthViewModel
 import pk.inlab.team.app.mem.ui.current.CurrentViewModelFactory
@@ -34,6 +35,7 @@ import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER
 import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -113,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         super.onResumeFragments()
         // Launch Coroutine
         uiScope.launch {
-            loadItems(rootView, getCurrentRateFromPrefs())
+            loadItems(getCurrentRateFromPrefs())
         }
     }
 
@@ -128,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                 currentRatePerKilo = it?.toInt()!!
                 // Launch Coroutine
                 uiScope.launch {
-                    loadItems(rootView, currentRatePerKilo)
+                    loadItems(currentRatePerKilo)
                 }
                 Log.e("#PREFS#", "Current value is = $it")
             })
@@ -178,11 +180,11 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
-    private suspend fun loadItems(root: View, currentRatePerKilo: Int) {
+    private suspend fun loadItems(currentRatePerKilo: Int) {
         currentMonthViewModel.getAllItemsRealTime().collect {
             when(it){
                 is State.Loading -> {
-                    showToast(root, "Loading")
+                    showToast(rootView, "Loading")
                 }
                 is State.Success -> {
                     Log.e("__DATA__", it.data.toString())
@@ -203,7 +205,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 is State.Failed -> {
                     Log.e("__DATA__", it.message)
-                    showToast(root, "Failed!")
+                    showToast(rootView, "Failed!")
                 }
             }
         }
@@ -227,8 +229,31 @@ class MainActivity : AppCompatActivity() {
             .setView(inputAlertDialogView)
             .setPositiveButton(resources.getString(R.string.save))
             { /*dialog*/ _ , /*which*/ _ ->
-                Snackbar.make(rootView, "You entered = ${binding.tilDialogItemTitle.text} and ${binding.tilDialogItemDescription.text}", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                uiScope.launch {
+                    currentMonthViewModel.addNewItem(
+                        PurchaseItem(
+                            UUID.randomUUID().toString(),
+                            Date().time,
+                            binding.tilDialogItemWeightInPaos.text.toString().toInt(),
+                            binding.tilDialogItemDescription.text.toString(),
+                        )
+                    ).collect{
+                        when(it){
+                            is State.Loading -> {
+                                showToast(rootView, "Loading")
+                            }
+                            is State.Success -> {
+                                Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show()
+                            }
+                            is State.Failed -> {
+                                Log.e("__DATA__", it.message)
+                                showToast(rootView, "Failed to Save data")
+                            }
+                        }
+                    }
+                }
+
             }
             .setNegativeButton(resources.getString(R.string.cancel))
             {  /*dialog*/ _ , /*which*/ _ ->
