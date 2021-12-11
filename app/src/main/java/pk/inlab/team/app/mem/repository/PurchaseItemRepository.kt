@@ -80,6 +80,9 @@ class PurchaseItemRepository {
      */
     fun deleteSelectedItem(documentId: String) = flow<State<DocumentReference>> {
 
+        var  failureMessage = ""
+        var isDeletionFailed = false
+
         // Emit loading state
         emit(State.loading())
 
@@ -87,10 +90,19 @@ class PurchaseItemRepository {
                         .document(documentId)
 
         // Just Delete current selected item
-        postRef.delete().await()
+        postRef.delete()
+            .addOnFailureListener {
+                isDeletionFailed = true
+                failureMessage = it.stackTraceToString()
+            }.await()
 
         // Emit success state with post reference
         emit(State.success(postRef))
+
+        if (isDeletionFailed){
+            // Emit Fail state with message
+            emit(State.failed(failureMessage))
+        }
 
     }.catch {
         // If exception is thrown, emit failed state along with message.

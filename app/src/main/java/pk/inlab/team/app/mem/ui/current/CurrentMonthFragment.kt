@@ -7,12 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +20,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.adapter.CurrentMonthAdapter
+import pk.inlab.team.app.mem.databinding.CurrentItemInfoBinding
 import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
+import pk.inlab.team.app.mem.model.PurchaseItem
 import pk.inlab.team.app.mem.ui.views.GridDividerItemDecoration
+import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.Utils.Companion.showIconsOnPopupMenu
 
@@ -29,7 +32,10 @@ import pk.inlab.team.app.mem.utils.Utils.Companion.showIconsOnPopupMenu
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class CurrentMonthFragment : Fragment(), CurrentMonthAdapter.OnItemLongClickListener {
+class CurrentMonthFragment : Fragment(),
+    CurrentMonthAdapter.OnItemClickListener,
+    CurrentMonthAdapter.OnItemLongClickListener
+{
 
     private lateinit var currentMonthViewModel: CurrentMonthViewModel
     private var _binding: FragmentCurrentBinding? = null
@@ -61,7 +67,7 @@ class CurrentMonthFragment : Fragment(), CurrentMonthAdapter.OnItemLongClickList
         recyclerView = binding.recyclerviewCurrent
 
         // Fetch Data from FireStore using Coroutine
-        val adapter = CurrentMonthAdapter(rootView, this)
+        val adapter = CurrentMonthAdapter(rootView, this, this)
         recyclerView.adapter = adapter
 
         // Launch coroutine
@@ -111,15 +117,52 @@ class CurrentMonthFragment : Fragment(), CurrentMonthAdapter.OnItemLongClickList
 
     }
 
+    // Show Info Dialog
+    override fun onItemClick(purchaseItem: PurchaseItem) {
+        showItemInfoDialog(purchaseItem)
+    }
+
+    private fun showItemInfoDialog(item: PurchaseItem) {
+        // Through bindings
+        val binding = CurrentItemInfoBinding.inflate(LayoutInflater.from(context))
+
+        // Time format
+        val time = DateUtils.convertLongToTime(item.purchaseTimeMilli)
+
+        // Get View from binding
+        val infoDialogView = binding.root
+
+        // Set Current Item Weight
+        binding.mtvCurrentItemInfoWeight.text = item.purchaseWeight.toString()
+
+        // Set Current Item Date
+        binding.mtvCurrentItemInfoTime.text = time
+
+        // Set Current Item Description
+        binding.mtvCurrentItemInfoDescription.text = item.purchaseDescription
+
+        // Date format
+        val dateMonthYear = DateUtils.convertLongToDateMonthYear(item.purchaseTimeMilli)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setCancelable(false)
+            .setTitle(dateMonthYear)
+            .setView(infoDialogView)
+            .setPositiveButton(requireContext().resources.getString(R.string.ok))
+            { dialog , /*which*/ _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 
     override fun onItemLongClick(currentItemView: View, itemId: String) {
-        showEditDeletePopUpMenu(currentItemView, R.menu.menu_pop_up)
+        showEditDeletePopUpMenu(currentItemView, itemId)
     }
 
     @SuppressLint("RestrictedApi")
-    private fun showEditDeletePopUpMenu(v: View, @MenuRes menuRes: Int) {
+    private fun showEditDeletePopUpMenu(v: View, itemId: String) {
         val popup = PopupMenu(v.context, v)
-        popup.menuInflater.inflate(menuRes, popup.menu)
+        popup.menuInflater.inflate(R.menu.menu_pop_up, popup.menu)
 
         popup.setOnMenuItemClickListener {
             when(it.itemId){
@@ -129,8 +172,8 @@ class CurrentMonthFragment : Fragment(), CurrentMonthAdapter.OnItemLongClickList
                     return@setOnMenuItemClickListener true
                 }
                 R.id.option_delete -> {
-                    Snackbar.make(rootView, "Delete Clicked", Snackbar.LENGTH_SHORT)
-                        .show()
+                    // Launch coroutine
+                    deleteItem(itemId)
                     return@setOnMenuItemClickListener true
                 }
                 else -> return@setOnMenuItemClickListener false
@@ -144,6 +187,27 @@ class CurrentMonthFragment : Fragment(), CurrentMonthAdapter.OnItemLongClickList
         popup.show()
     }
 
+    private fun deleteItem(itemId: String) {
+        uiScope.launch {
+            currentMonthViewModel.deleteSelectedItem(itemId).collect {
+                when (it) {
+                    is State.Loading -> {
+                        showToast(rootView, "Loading")
+                    }
+
+                    is State.Success -> {
+                        Snackbar.make(rootView, "Item Deleted", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                    is State.Failed -> {
+                        Log.e("__DATA__", it.message)
+                        showToast(rootView, "Failed!")
+                    }
+                }
+            }
+        }
+    }
+
     private fun showToast(root: View, message: String) {
         Toast.makeText(root.context, message, Toast.LENGTH_SHORT).show()
     }
@@ -152,5 +216,6 @@ class CurrentMonthFragment : Fragment(), CurrentMonthAdapter.OnItemLongClickList
         super.onDestroyView()
         _binding = null
     }
+
 
 }
