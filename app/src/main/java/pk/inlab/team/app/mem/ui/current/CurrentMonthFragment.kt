@@ -67,7 +67,7 @@ class CurrentMonthFragment : Fragment(),
         recyclerView = binding.recyclerviewCurrent
 
         // Fetch Data from FireStore using Coroutine
-        val adapter = CurrentMonthAdapter(rootView, this, this)
+        val adapter = CurrentMonthAdapter(this, this)
         recyclerView.adapter = adapter
 
         // Launch coroutine
@@ -87,7 +87,7 @@ class CurrentMonthFragment : Fragment(),
             GridDividerItemDecoration(
                 horizontalDivider,
                 verticalDivider,
-                3
+                4
             )
         )
     }

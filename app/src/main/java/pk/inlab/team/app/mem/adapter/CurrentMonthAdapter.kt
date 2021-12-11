@@ -10,10 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import pk.inlab.team.app.mem.databinding.ItemCurrentBinding
 import pk.inlab.team.app.mem.model.PurchaseItem
-import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDayDate
+import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDate
 
 class CurrentMonthAdapter(
-    private val rootView: View,
     private val onItemClickListener: OnItemClickListener,
     private val onItemLongClickListener: OnItemLongClickListener
 ) : ListAdapter<PurchaseItem, CurrentMonthAdapter.CurrentMonth>(
@@ -54,7 +53,7 @@ class CurrentMonthAdapter(
         override fun onBindViewHolder(holder: CurrentMonth, position: Int) {
             val item = getItem(position)
             holder.itemWeightInPaos.text = item.purchaseWeight.toString()
-            holder.itemPurchaseDate.text = convertLongToDayDate(item.purchaseTimeMilli)
+            holder.itemPurchaseDate.text = convertLongToDate(item.purchaseTimeMilli)
 
             // Click listener to show Info
             holder.itemContainer.setOnClickListener {

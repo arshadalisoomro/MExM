@@ -41,6 +41,12 @@ class DateUtils {
             return format.format(date)
         }
 
+        fun convertLongToDate(time: Long): String {
+            val date = Date(time)
+            val format = SimpleDateFormat("dd", Locale.US)
+            return format.format(date)
+        }
+
         private fun min(): String {
             return java.lang.String.valueOf(
                 Calendar.getInstance().getActualMinimum(Calendar.DAY_OF_MONTH)
