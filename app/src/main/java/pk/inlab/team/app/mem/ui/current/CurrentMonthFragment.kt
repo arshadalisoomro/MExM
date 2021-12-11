@@ -39,19 +39,6 @@ class CurrentMonthFragment : Fragment(),
     CurrentMonthAdapter.OnItemClickListener,
     CurrentMonthAdapter.OnItemLongClickListener
 {
-//
-//    /**
-//     * Handles change on item added into firestore collection
-//     */
-//    interface OnItemAddedListener {
-//        /**
-//         * Gets weight of new added purchaseItem  [purchaseItem] from the list fetched from
-//         * the cloud firestore collection.
-//         * @return Int
-//         */
-//        fun onItemAdded(purchaseItem: PurchaseItem): Int
-//    }
-//
 
     private lateinit var currentMonthViewModel: CurrentMonthViewModel
     private var _binding: FragmentCurrentBinding? = null
