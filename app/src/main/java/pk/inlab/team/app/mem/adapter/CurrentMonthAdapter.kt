@@ -42,7 +42,7 @@ class CurrentMonthAdapter(
      * Handles Long click on item for Edit and delete operation
      */
     interface OnItemLongClickListener {
-        fun onItemLongClick(currentItemView: View, itemId: String)
+        fun onItemLongClick(currentItemView: View, purchaseItem: PurchaseItem)
     }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrentMonth {
@@ -66,7 +66,7 @@ class CurrentMonthAdapter(
             holder.itemContainer.setOnLongClickListener {
                 // showEditDeletePopUpMenu(rootView, it, R.menu.menu_pop_up)
                 // Pass the id of Current Item for further process
-                onItemLongClickListener.onItemLongClick(it, item.id)
+                onItemLongClickListener.onItemLongClick(it, item)
                 return@setOnLongClickListener true
             }
 

@@ -2,6 +2,7 @@ package pk.inlab.team.app.mem.ui.current
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,11 +23,13 @@ import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.adapter.CurrentMonthAdapter
 import pk.inlab.team.app.mem.databinding.CurrentItemInfoBinding
 import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
+import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
 import pk.inlab.team.app.mem.model.PurchaseItem
 import pk.inlab.team.app.mem.ui.views.GridDividerItemDecoration
 import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.Utils.Companion.showIconsOnPopupMenu
+import java.util.*
 
 
 /**
@@ -156,25 +159,26 @@ class CurrentMonthFragment : Fragment(),
             .show()
     }
 
-    override fun onItemLongClick(currentItemView: View, itemId: String) {
-        showEditDeletePopUpMenu(currentItemView, itemId)
+    override fun onItemLongClick(currentItemView: View, purchaseItem: PurchaseItem) {
+        showEditDeletePopUpMenu(currentItemView, purchaseItem)
     }
 
     @SuppressLint("RestrictedApi")
-    private fun showEditDeletePopUpMenu(v: View, itemId: String) {
+    private fun showEditDeletePopUpMenu(v: View, purchaseItem: PurchaseItem) {
         val popup = PopupMenu(v.context, v)
         popup.menuInflater.inflate(R.menu.menu_pop_up, popup.menu)
 
         popup.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.option_edit -> {
-                    Snackbar.make(rootView, "Edit Clicked", Snackbar.LENGTH_SHORT)
-                        .show()
+                    showEditDialog(purchaseItem)
+//                    Snackbar.make(rootView, "Edit Clicked", Snackbar.LENGTH_SHORT)
+//                        .show()
                     return@setOnMenuItemClickListener true
                 }
                 R.id.option_delete -> {
                     // Launch coroutine
-                    deleteItem(itemId)
+                    deleteItem(purchaseItem.id)
                     return@setOnMenuItemClickListener true
                 }
                 else -> return@setOnMenuItemClickListener false
@@ -186,6 +190,56 @@ class CurrentMonthFragment : Fragment(),
 
         // Show the popup menu.
         popup.show()
+    }
+
+    private fun showEditDialog(purchaseItem: PurchaseItem) {
+        // Through bindings
+        val binding = InputPurchaseItemBinding.inflate(LayoutInflater.from(requireContext()))
+
+        // Get View from binding
+        val inputAlertDialogView = binding.root
+
+        // Set values to EditTexts
+        binding.tilDialogItemWeightInPaos.setText(purchaseItem.purchaseWeight.toString())
+        binding.tilDialogItemDescription.setText(purchaseItem.purchaseDescription)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setCancelable(false)
+            .setTitle(resources.getString(R.string.new_item))
+            .setView(inputAlertDialogView)
+            .setPositiveButton(resources.getString(R.string.save))
+            { /*dialog*/ _ , /*which*/ _ ->
+                uiScope.launch {
+                    currentMonthViewModel.addNewItem(
+                        PurchaseItem(
+                            UUID.randomUUID().toString(),
+                            Date().time,
+                            binding.tilDialogItemWeightInPaos.text.toString().toInt(),
+                            binding.tilDialogItemDescription.text.toString(),
+                        )
+                    ).collect{
+                        when(it){
+                            is State.Loading -> {
+                                showToast(rootView, "Loading")
+                            }
+                            is State.Success -> {
+                                Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show()
+                            }
+                            is State.Failed -> {
+                                Log.e("__DATA__", it.message)
+                                showToast(rootView, "Failed to Save data")
+                            }
+                        }
+                    }
+                }
+
+            }
+            .setNegativeButton(resources.getString(R.string.cancel))
+            {  /*dialog*/ _ , /*which*/ _ ->
+                // Just Placeholder
+            }
+            .show()
     }
 
     private fun deleteItem(itemId: String) {
