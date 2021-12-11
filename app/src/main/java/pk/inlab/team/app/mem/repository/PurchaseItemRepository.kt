@@ -75,6 +75,43 @@ class PurchaseItemRepository {
     }.flowOn(Dispatchers.IO)
 
     /**
+     * Updates pre-existing purchaseItem [purchaseItem] into the cloud firestore collection.
+     * @return The Flow of [State] which will store state of current action.
+     */
+    fun updateCurrentItem(purchaseItem: PurchaseItem) = flow<State<DocumentReference>> {
+
+        var  failureMessage = ""
+        var isUpdationFailed = false
+
+
+        // Emit loading state
+        emit(State.loading())
+
+        val postRef = mPurchaseItemsCollection
+            .document(purchaseItem.id)
+
+        postRef.set(purchaseItem)
+            .addOnFailureListener {
+                isUpdationFailed = true
+                failureMessage = it.stackTraceToString()
+            }
+            .await()
+
+        // Emit success state with post reference
+        emit(State.success(postRef))
+
+        if (isUpdationFailed){
+            // Emit Fail state with message
+            emit(State.failed(failureMessage))
+        }
+
+
+    }.catch {
+        // If exception is thrown, emit failed state along with message.
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+    /**
      * Deletes selected purchaseItem with given documentId [documentId] from the cloud firestore collection.
      * @return The Flow of [State] which will store state of current action.
      */

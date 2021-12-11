@@ -10,5 +10,7 @@ class CurrentMonthViewModel(private val itemRepository: PurchaseItemRepository) 
 
     fun addNewItem(purchaseItem: PurchaseItem) = itemRepository.addNewItem(purchaseItem)
 
+    fun updateCurrentItem(purchaseItem: PurchaseItem) = itemRepository.updateCurrentItem(purchaseItem)
+
     fun deleteSelectedItem(documentId: String) = itemRepository.deleteSelectedItem(documentId)
 }

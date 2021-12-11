@@ -172,12 +172,9 @@ class CurrentMonthFragment : Fragment(),
             when(it.itemId){
                 R.id.option_edit -> {
                     showEditDialog(purchaseItem)
-//                    Snackbar.make(rootView, "Edit Clicked", Snackbar.LENGTH_SHORT)
-//                        .show()
                     return@setOnMenuItemClickListener true
                 }
                 R.id.option_delete -> {
-                    // Launch coroutine
                     deleteItem(purchaseItem.id)
                     return@setOnMenuItemClickListener true
                 }
@@ -209,30 +206,7 @@ class CurrentMonthFragment : Fragment(),
             .setView(inputAlertDialogView)
             .setPositiveButton(resources.getString(R.string.save))
             { /*dialog*/ _ , /*which*/ _ ->
-                uiScope.launch {
-                    currentMonthViewModel.addNewItem(
-                        PurchaseItem(
-                            UUID.randomUUID().toString(),
-                            Date().time,
-                            binding.tilDialogItemWeightInPaos.text.toString().toInt(),
-                            binding.tilDialogItemDescription.text.toString(),
-                        )
-                    ).collect{
-                        when(it){
-                            is State.Loading -> {
-                                showToast(rootView, "Loading")
-                            }
-                            is State.Success -> {
-                                Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show()
-                            }
-                            is State.Failed -> {
-                                Log.e("__DATA__", it.message)
-                                showToast(rootView, "Failed to Save data")
-                            }
-                        }
-                    }
-                }
+                updateCurrentItem(purchaseItem, binding)
 
             }
             .setNegativeButton(resources.getString(R.string.cancel))
@@ -242,7 +216,41 @@ class CurrentMonthFragment : Fragment(),
             .show()
     }
 
+    private fun updateCurrentItem(
+        purchaseItem: PurchaseItem,
+        binding: InputPurchaseItemBinding
+    ) {
+
+        // Launch coroutine
+        uiScope.launch {
+            currentMonthViewModel.updateCurrentItem(
+                PurchaseItem(
+                    purchaseItem.id,
+                    purchaseItem.purchaseTimeMilli,
+                    binding.tilDialogItemWeightInPaos.text.toString().toInt(),
+                    binding.tilDialogItemDescription.text.toString(),
+                )
+            ).collect {
+                when (it) {
+                    is State.Loading -> {
+                        showToast(rootView, "Loading")
+                    }
+                    is State.Success -> {
+                        Snackbar.make(rootView, "Item Updated", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show()
+                    }
+                    is State.Failed -> {
+                        Log.e("__DATA__", it.message)
+                        showToast(rootView, "Failed to Save data")
+                    }
+                }
+            }
+        }
+    }
+
     private fun deleteItem(itemId: String) {
+
+        // Launch coroutine
         uiScope.launch {
             currentMonthViewModel.deleteSelectedItem(itemId).collect {
                 when (it) {
