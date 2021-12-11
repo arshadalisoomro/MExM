@@ -9,4 +9,6 @@ class CurrentMonthViewModel(private val itemRepository: PurchaseItemRepository) 
     fun getAllItemsRealTime() = itemRepository.getAllItemsRealtime()
 
     fun addNewItem(purchaseItem: PurchaseItem) = itemRepository.addNewItem(purchaseItem)
+
+    fun deleteSelectedItem(documentId: String) = itemRepository.deleteSelectedItem(documentId)
 }

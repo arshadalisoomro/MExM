@@ -1,22 +1,14 @@
 package pk.inlab.team.app.mem.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.InsetDrawable
-import android.os.Build
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.MenuRes
-import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import pk.inlab.team.app.mem.R
 import pk.inlab.team.app.mem.databinding.CurrentItemInfoBinding
@@ -26,15 +18,27 @@ import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDateMonthYea
 import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToDayDate
 import pk.inlab.team.app.mem.utils.DateUtils.Companion.convertLongToTime
 
-class CurrentMonthAdapter(private val rootView: View) :
-        ListAdapter<PurchaseItem, CurrentMonthAdapter.CurrentMonth>(object : DiffUtil.ItemCallback<PurchaseItem>() {
+class CurrentMonthAdapter(
+    private val rootView: View,
+    private val listener: OnItemLongClickListener
+) : ListAdapter<PurchaseItem, CurrentMonthAdapter.CurrentMonth>(
+    object : DiffUtil.ItemCallback<PurchaseItem>() {
 
             override fun areItemsTheSame(oldItem: PurchaseItem, newItem: PurchaseItem): Boolean =
                 oldItem == newItem
 
             override fun areContentsTheSame(oldItem: PurchaseItem, newItem: PurchaseItem): Boolean =
                 oldItem == newItem
-        }) {
+        }
+) {
+
+
+    /**
+     * Handles Long click on item for Edit and delete operation
+     */
+    interface OnItemLongClickListener {
+        fun onItemLongClick(currentItemView: View, itemId: String)
+    }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrentMonth {
             val binding = ItemCurrentBinding.inflate(LayoutInflater.from(parent.context))
@@ -54,7 +58,9 @@ class CurrentMonthAdapter(private val rootView: View) :
 
             // Long Click listener to show Edit Delete Popup menu
             holder.itemContainer.setOnLongClickListener {
-                showEditDeletePopUpMenu(rootView, it, R.menu.menu_pop_up)
+                // showEditDeletePopUpMenu(rootView, it, R.menu.menu_pop_up)
+                // Pass the id of Current Item for further process
+                listener.onItemLongClick(it, item.id)
                 return@setOnLongClickListener true
             }
 
@@ -91,58 +97,6 @@ class CurrentMonthAdapter(private val rootView: View) :
                 dialog.dismiss()
             }
             .show()
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun showEditDeletePopUpMenu(rootView: View, v: View, @MenuRes menuRes: Int) {
-        val popup = PopupMenu(v.context, v)
-        popup.menuInflater.inflate(menuRes, popup.menu)
-
-        popup.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.option_edit -> {
-                    Snackbar.make(rootView, "Edit Clicked", Snackbar.LENGTH_SHORT)
-                        .show()
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.option_delete -> {
-                    Snackbar.make(rootView, "Delete Clicked", Snackbar.LENGTH_SHORT)
-                        .show()
-                    return@setOnMenuItemClickListener true
-                }
-                else -> return@setOnMenuItemClickListener false
-            }
-
-        }
-
-        if (popup.menu is MenuBuilder) {
-            val menuBuilder = popup.menu as MenuBuilder
-            menuBuilder.setOptionalIconsVisible(true)
-            for (item in menuBuilder.visibleItems) {
-
-                val ICON_MARGIN = 16
-
-                val iconMarginPx =
-                    TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, ICON_MARGIN.toFloat(), rootView.resources.displayMetrics)
-                        .toInt()
-                if (item.icon != null) {
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                        item.icon = InsetDrawable(item.icon, iconMarginPx, 0, iconMarginPx,0)
-                    } else {
-                        item.icon =
-                            object : InsetDrawable(item.icon, iconMarginPx, 0, iconMarginPx, 0) {
-                                override fun getIntrinsicWidth(): Int {
-                                    return intrinsicHeight + iconMarginPx + iconMarginPx
-                                }
-                            }
-                    }
-                }
-            }
-        }
-
-        // Show the popup menu.
-        popup.show()
     }
 
     inner class CurrentMonth(binding: ItemCurrentBinding) :

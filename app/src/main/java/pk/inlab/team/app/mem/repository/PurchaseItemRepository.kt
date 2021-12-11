@@ -74,4 +74,28 @@ class PurchaseItemRepository {
         emit(State.failed(it.message.toString()))
     }.flowOn(Dispatchers.IO)
 
+    /**
+     * Deletes selected purchaseItem with given documentId [documentId] from the cloud firestore collection.
+     * @return The Flow of [State] which will store state of current action.
+     */
+    fun deleteSelectedItem(documentId: String) = flow<State<DocumentReference>> {
+
+        // Emit loading state
+        emit(State.loading())
+
+        val postRef = mPurchaseItemsCollection
+                        .document(documentId)
+
+        // Just Delete current selected item
+        postRef.delete().await()
+
+        // Emit success state with post reference
+        emit(State.success(postRef))
+
+    }.catch {
+        // If exception is thrown, emit failed state along with message.
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
+
+
 }

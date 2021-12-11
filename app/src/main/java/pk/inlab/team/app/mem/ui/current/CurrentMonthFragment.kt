@@ -1,15 +1,19 @@
 package pk.inlab.team.app.mem.ui.current
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.MenuRes
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -19,12 +23,13 @@ import pk.inlab.team.app.mem.adapter.CurrentMonthAdapter
 import pk.inlab.team.app.mem.databinding.FragmentCurrentBinding
 import pk.inlab.team.app.mem.ui.views.GridDividerItemDecoration
 import pk.inlab.team.app.mem.utils.State
+import pk.inlab.team.app.mem.utils.Utils.Companion.showIconsOnPopupMenu
 
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class CurrentMonthFragment : Fragment() {
+class CurrentMonthFragment : Fragment(), CurrentMonthAdapter.OnItemLongClickListener {
 
     private lateinit var currentMonthViewModel: CurrentMonthViewModel
     private var _binding: FragmentCurrentBinding? = null
@@ -39,13 +44,16 @@ class CurrentMonthFragment : Fragment() {
     // RV globally
     private lateinit var recyclerView: RecyclerView
 
+    // RootView a Globally
+    private lateinit var rootView: View
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
         _binding = FragmentCurrentBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        binding.root.also { rootView = it }
 
         currentMonthViewModel = ViewModelProvider(this, CurrentViewModelFactory())
             .get(CurrentMonthViewModel::class.java)
@@ -53,14 +61,14 @@ class CurrentMonthFragment : Fragment() {
         recyclerView = binding.recyclerviewCurrent
 
         // Fetch Data from FireStore using Coroutine
-        val adapter = CurrentMonthAdapter(root)
+        val adapter = CurrentMonthAdapter(rootView, this)
         recyclerView.adapter = adapter
 
         // Launch coroutine
         uiScope.launch {
-            loadItems(root, adapter)
+            loadItems(adapter)
         }
-        return root
+        return rootView
 
     }
 
@@ -78,11 +86,11 @@ class CurrentMonthFragment : Fragment() {
         )
     }
 
-    private suspend fun loadItems(root: View, adapter: CurrentMonthAdapter) {
+    private suspend fun loadItems(adapter: CurrentMonthAdapter) {
         currentMonthViewModel.getAllItemsRealTime().collect {
             when(it){
                 is State.Loading -> {
-                    showToast(root, "Loading")
+                    showToast(rootView, "Loading")
                 }
                 is State.Success -> {
                     Log.e("__DATA__", it.data.toString())
@@ -96,11 +104,44 @@ class CurrentMonthFragment : Fragment() {
                 }
                 is State.Failed -> {
                     Log.e("__DATA__", it.message)
-                    showToast(root, "Failed!")
+                    showToast(rootView, "Failed!")
                 }
             }
         }
 
+    }
+
+
+    override fun onItemLongClick(currentItemView: View, itemId: String) {
+        showEditDeletePopUpMenu(currentItemView, R.menu.menu_pop_up)
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun showEditDeletePopUpMenu(v: View, @MenuRes menuRes: Int) {
+        val popup = PopupMenu(v.context, v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.option_edit -> {
+                    Snackbar.make(rootView, "Edit Clicked", Snackbar.LENGTH_SHORT)
+                        .show()
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.option_delete -> {
+                    Snackbar.make(rootView, "Delete Clicked", Snackbar.LENGTH_SHORT)
+                        .show()
+                    return@setOnMenuItemClickListener true
+                }
+                else -> return@setOnMenuItemClickListener false
+            }
+
+        }
+        // Set Icons on PopupMenu
+        showIconsOnPopupMenu(popup, rootView)
+
+        // Show the popup menu.
+        popup.show()
     }
 
     private fun showToast(root: View, message: String) {
@@ -111,4 +152,5 @@ class CurrentMonthFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
