@@ -2,7 +2,6 @@ package pk.inlab.team.app.mem.ui.current
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pk.inlab.team.app.mem.R
@@ -73,6 +73,7 @@ class CurrentMonthFragment : Fragment(),
         // Launch coroutine
         uiScope.launch {
             loadItems(adapter)
+            delay(1500L)
         }
         return rootView
 
@@ -96,21 +97,21 @@ class CurrentMonthFragment : Fragment(),
         currentMonthViewModel.getAllItemsRealTime().collect {
             when(it){
                 is State.Loading -> {
-                    showToast(rootView, "Loading")
+                    if (!binding.lpiLoading.isShown) binding.lpiLoading.show()
                 }
                 is State.Success -> {
-                    Log.e("__DATA__", it.data.toString())
-
+                    // Submit data to adapter
                     adapter.submitList(it.data)
 
                     // List is not empty or less than or Equal to 3 items then set setGridItemDecorator
                     if(it.data.isNotEmpty() && it.data.size >= 3) setGridItemDecorator(recyclerView)
 
-
+                    if (binding.lpiLoading.isShown) binding.lpiLoading.hide()
                 }
                 is State.Failed -> {
-                    Log.e("__DATA__", it.message)
-                    showToast(rootView, "Failed!")
+                    Snackbar.make(rootView, "Error is: ${it.message}", Snackbar.LENGTH_SHORT)
+                        .show()
+                    if (binding.lpiLoading.isShown) binding.lpiLoading.hide()
                 }
             }
         }
@@ -192,16 +193,19 @@ class CurrentMonthFragment : Fragment(),
             currentMonthViewModel.deleteSelectedItem(itemId).collect {
                 when (it) {
                     is State.Loading -> {
-                        showToast(rootView, "Loading")
+                        if (!binding.lpiLoading.isShown) binding.lpiLoading.show()
                     }
 
                     is State.Success -> {
                         Snackbar.make(rootView, "Item Deleted", Snackbar.LENGTH_SHORT)
                             .show()
+
+                        if (binding.lpiLoading.isShown) binding.lpiLoading.hide()
                     }
                     is State.Failed -> {
-                        Log.e("__DATA__", it.message)
-                        showToast(rootView, "Failed!")
+                        Snackbar.make(rootView, "Error is: ${it.message}", Snackbar.LENGTH_SHORT)
+                            .show()
+                        if (binding.lpiLoading.isShown) binding.lpiLoading.hide()
                     }
                 }
             }
