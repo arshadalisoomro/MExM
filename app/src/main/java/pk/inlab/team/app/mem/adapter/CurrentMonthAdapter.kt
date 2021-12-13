@@ -27,6 +27,7 @@ class CurrentMonthAdapter(
 ) {
 
 
+
     /**
      * Handles Single click on item for Info Dialog
      */
@@ -71,6 +72,8 @@ class CurrentMonthAdapter(
             }
 
         }
+
+
 
     inner class CurrentMonth(binding: ItemCurrentBinding) :
             RecyclerView.ViewHolder(binding.root) {

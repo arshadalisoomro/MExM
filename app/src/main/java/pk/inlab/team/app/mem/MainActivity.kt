@@ -195,11 +195,14 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     if (currentRatePerKilo >= 0){
-                        val totalMonthWeightInKgs = (totalMonthWeightInPaos/4)
+                        // Set value of Paos as Int
+                        binding.mtvMilkMonthTotalPaos.text = getString(R.string.total_month_paos, totalMonthWeightInPaos)
+
+                        val totalMonthWeightInKgs = (totalMonthWeightInPaos/4.0)
                         val totalMonthExpenseValue = totalMonthWeightInKgs * currentRatePerKilo
                         // Set Values to views
-                        binding.mtvMilkTotalMonthExpense.text = getString(R.string.total_month_expense, totalMonthExpenseValue)
-                        binding.mtvMilkMonthTotalPaos.text = getString(R.string.total_month_paos, totalMonthWeightInPaos)
+                        binding.mtvMilkTotalMonthExpense.text = getString(R.string.total_month_expense, totalMonthExpenseValue.toInt())
+
                         binding.mtvMilkMonthTotalKilos.text = getString(R.string.total_month_kgs, totalMonthWeightInKgs)
                     }
                 }
