@@ -11,22 +11,24 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import pk.inlab.team.app.mem.model.PurchaseItem
 import pk.inlab.team.app.mem.utils.Constants
+import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.toObjectsWithId
 
-class PurchaseItemRepository {
+class CurrentMonthPurchaseRepository {
 
-    private val mPurchaseItemsCollection =
-        FirebaseFirestore.getInstance().collection(Constants.COLLECTION_PURCHASE_ITEM)
-
-
+    var currentMonthWithStartAndEndDate = DateUtils.getCurrentMonthWithStartEndDate()
+    private val mCurrentMonthPurchaseItemsCollection = FirebaseFirestore.getInstance()
+                                                            .collection(Constants.COLLECTION_PURCHASE_ITEM)
+                                                            .document(currentMonthWithStartAndEndDate)
+                                                            .collection(currentMonthWithStartAndEndDate)
     /**
      * Returns ProducerScope of [State] which retrieves all PurchaseItems from cloud firestore collection.
      */
-    fun getAllItemsRealtime() : Flow<State<List<PurchaseItem>>> = callbackFlow {
+    fun getAllItemsOfCurrentMonth() : Flow<State<List<PurchaseItem>>> = callbackFlow {
 
         // Register listener
-        val listener = mPurchaseItemsCollection
+        val listener = mCurrentMonthPurchaseItemsCollection
             .orderBy("purchaseTimeMilli", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, exception ->
 
@@ -59,12 +61,12 @@ class PurchaseItemRepository {
      * Adds purchaseItem [purchaseItem] into the cloud firestore collection.
      * @return The Flow of [State] which will store state of current action.
      */
-    fun addNewItem(purchaseItem: PurchaseItem) = flow<State<DocumentReference>> {
+    fun addNewItemToCurrentMonth(purchaseItem: PurchaseItem) = flow<State<DocumentReference>> {
 
         // Emit loading state
         emit(State.loading())
 
-        val postRef = mPurchaseItemsCollection.add(purchaseItem).await()
+        val postRef = mCurrentMonthPurchaseItemsCollection.add(purchaseItem).await()
 
         // Emit success state with post reference
         emit(State.success(postRef))
@@ -78,7 +80,7 @@ class PurchaseItemRepository {
      * Updates pre-existing purchaseItem [purchaseItem] into the cloud firestore collection.
      * @return The Flow of [State] which will store state of current action.
      */
-    fun updateCurrentItem(purchaseItem: PurchaseItem) = flow<State<DocumentReference>> {
+    fun updateCurrentItemOfCurrentMonth(purchaseItem: PurchaseItem) = flow<State<DocumentReference>> {
 
         var  failureMessage = ""
         var isUpdationFailed = false
@@ -87,7 +89,7 @@ class PurchaseItemRepository {
         // Emit loading state
         emit(State.loading())
 
-        val postRef = mPurchaseItemsCollection
+        val postRef = mCurrentMonthPurchaseItemsCollection
             .document(purchaseItem.id)
 
         postRef.set(purchaseItem)
@@ -115,7 +117,7 @@ class PurchaseItemRepository {
      * Deletes selected purchaseItem with given documentId [documentId] from the cloud firestore collection.
      * @return The Flow of [State] which will store state of current action.
      */
-    fun deleteSelectedItem(documentId: String) = flow<State<DocumentReference>> {
+    fun deleteCurrentItemOfCurrentMonth(documentId: String) = flow<State<DocumentReference>> {
 
         var  failureMessage = ""
         var isDeletionFailed = false
@@ -123,8 +125,8 @@ class PurchaseItemRepository {
         // Emit loading state
         emit(State.loading())
 
-        val postRef = mPurchaseItemsCollection
-                        .document(documentId)
+        val postRef = mCurrentMonthPurchaseItemsCollection
+            .document(documentId)
 
         // Just Delete current selected item
         postRef.delete()

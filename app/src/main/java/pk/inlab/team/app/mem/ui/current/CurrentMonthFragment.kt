@@ -221,7 +221,7 @@ class CurrentMonthFragment : Fragment(),
 
         // Launch coroutine
         uiScope.launch {
-            currentMonthViewModel.updateCurrentItem(
+            currentMonthViewModel.updateCurrentItemOfCurrentMonth(
                 PurchaseItem(
                     purchaseItem.id,
                     purchaseItem.purchaseTimeMilli,
@@ -250,7 +250,7 @@ class CurrentMonthFragment : Fragment(),
 
         // Launch coroutine
         uiScope.launch {
-            currentMonthViewModel.deleteSelectedItem(itemId).collect {
+            currentMonthViewModel.deleteCurrentItemOfCurrentMonth(itemId).collect {
                 when (it) {
                     is State.Loading -> {
                         if (!binding.lpiLoading.isShown) binding.lpiLoading.show()
