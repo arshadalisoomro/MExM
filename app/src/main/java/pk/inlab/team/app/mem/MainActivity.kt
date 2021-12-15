@@ -178,7 +178,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun loadItems(currentRatePerKilo: Int) {
-        currentMonthViewModel.getAllItemsRealTime().collect {
+        currentMonthViewModel.getAllItemsOfCurrentMonth().collect {
             when(it){
                 is State.Loading -> {
                     // showToast(rootView, "Loading")
@@ -224,7 +224,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton(resources.getString(R.string.save))
             { /*dialog*/ _ , /*which*/ _ ->
                 uiScope.launch {
-                    currentMonthViewModel.addNewItem(
+                    currentMonthViewModel.addNewItemToCurrentMonth(
                         PurchaseItem(
                             UUID.randomUUID().toString(),
                             Date().time,
@@ -245,6 +245,28 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+
+//                    currentMonthViewModel.addNewItem(
+//                        PurchaseItem(
+//                            UUID.randomUUID().toString(),
+//                            Date().time,
+//                            binding.tilDialogItemWeightInPaos.text.toString().toInt(),
+//                            binding.tilDialogItemDescription.text.toString(),
+//                        )
+//                    ).collect{
+//                        when(it){
+//                            is State.Loading -> {
+//
+//                            }
+//                            is State.Success -> {
+//                                Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
+//                                    .setAction("Action", null).show()
+//                            }
+//                            is State.Failed -> {
+//
+//                            }
+//                        }
+//                    }
                 }
 
             }

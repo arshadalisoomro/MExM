@@ -6,7 +6,11 @@ import pk.inlab.team.app.mem.repository.PurchaseItemRepository
 
 class CurrentMonthViewModel(private val itemRepository: PurchaseItemRepository) : ViewModel() {
 
+    fun getAllItemsOfCurrentMonth() = itemRepository.getAllItemsOfCurrentMonth()
+
     fun getAllItemsRealTime() = itemRepository.getAllItemsRealtime()
+
+    fun addNewItemToCurrentMonth(purchaseItem: PurchaseItem) = itemRepository.addNewItemToCurrentMonth(purchaseItem)
 
     fun addNewItem(purchaseItem: PurchaseItem) = itemRepository.addNewItem(purchaseItem)
 

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import pk.inlab.team.app.mem.model.PurchaseItem
 import pk.inlab.team.app.mem.utils.Constants
+import pk.inlab.team.app.mem.utils.DateUtils.Companion.getCurrentMonthWithStartEndDate
 import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.toObjectsWithId
 
@@ -19,13 +20,16 @@ class PurchaseItemRepository {
     private val mPurchaseItemsCollection =
         FirebaseFirestore.getInstance().collection(Constants.COLLECTION_PURCHASE_ITEM)
 
+
+    var currentMonthWithStartAndEndDate = getCurrentMonthWithStartEndDate()
+
     /**
      * Returns ProducerScope of [State] which retrieves all PurchaseItems from cloud firestore collection.
      */
-    fun getAllItemsRealtime() : Flow<State<List<PurchaseItem>>> = callbackFlow {
+    fun getAllItemsOfCurrentMonth() : Flow<State<List<PurchaseItem>>> = callbackFlow {
 
         // Register listener
-        val listener = mPurchaseItemsCollection
+        val listener = mPurchaseItemsCollection.document(currentMonthWithStartAndEndDate).collection(currentMonthWithStartAndEndDate)
             .orderBy("purchaseTimeMilli", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, exception ->
 
@@ -33,7 +37,6 @@ class PurchaseItemRepository {
                     // snapshot.documentChanges.get
                     Log.e("PurchaseItemRepository", snapshot.documents.toString())
                     trySend(
-
                         State.success(snapshot.toObjectsWithId(PurchaseItem::class.java))
                     )
                 }
@@ -54,6 +57,61 @@ class PurchaseItemRepository {
             cancel()
         }
     }
+
+    /**
+     * Returns ProducerScope of [State] which retrieves all PurchaseItems from cloud firestore collection.
+     */
+    fun getAllItemsRealtime() : Flow<State<List<PurchaseItem>>> = callbackFlow {
+
+        // Register listener
+        val listener = mPurchaseItemsCollection
+            .orderBy("purchaseTimeMilli", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, exception ->
+
+                if (snapshot != null) {
+                    // snapshot.documentChanges.get
+                    Log.e("PurchaseItemRepository", snapshot.documents.toString())
+                    trySend(
+                        State.success(snapshot.toObjectsWithId(PurchaseItem::class.java))
+                    )
+                }
+
+                // If exception occurs, cancel this scope with exception message.
+                exception?.let {
+                    trySend(State.failed(it.message.toString())).isSuccess
+                    cancel(it.message.toString())
+                }
+            }
+
+        awaitClose {
+            // This block is executed when producer channel is cancelled
+            // This function resumes with a cancellation exception.
+
+            // Dispose listener
+            listener.remove()
+            cancel()
+        }
+    }
+
+    /**
+     * Adds purchaseItem [purchaseItem] into the cloud firestore collection.
+     * @return The Flow of [State] which will store state of current action.
+     */
+    fun addNewItemToCurrentMonth(purchaseItem: PurchaseItem) = flow<State<DocumentReference>> {
+
+        // Emit loading state
+        emit(State.loading())
+
+        val postRef = mPurchaseItemsCollection.document(currentMonthWithStartAndEndDate)
+                        .collection(currentMonthWithStartAndEndDate).add(purchaseItem).await()
+
+        // Emit success state with post reference
+        emit(State.success(postRef))
+
+    }.catch {
+        // If exception is thrown, emit failed state along with message.
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
     /**
      * Adds purchaseItem [purchaseItem] into the cloud firestore collection.

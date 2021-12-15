@@ -93,7 +93,7 @@ class CurrentMonthFragment : Fragment(),
     }
 
     private suspend fun loadItems(adapter: CurrentMonthAdapter) {
-        currentMonthViewModel.getAllItemsRealTime().collect {
+        currentMonthViewModel.getAllItemsOfCurrentMonth().collect {
 
 
             when(it){

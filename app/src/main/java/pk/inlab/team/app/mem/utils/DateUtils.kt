@@ -67,12 +67,20 @@ class DateUtils {
             return Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH)
         }
 
-        fun getToday(): String? {
+        fun getToday(): String {
             return SimpleDateFormat("MMM", locale)
                 .format(Calendar.getInstance().time).uppercase(locale) +
                     " " + min() + "-" + max() +
                     ", " + Calendar.getInstance()[Calendar.YEAR]
         }
+
+        fun getCurrentMonthWithStartEndDate(): String {
+            return SimpleDateFormat("MMM", locale)
+                .format(Calendar.getInstance().time).uppercase(locale) +
+                    "_" + min() + "_" + max() +
+                    "_" + Calendar.getInstance()[Calendar.YEAR]
+        }
+
 
         fun getDate(date: Date): String? {
             return SimpleDateFormat("dd", locale)
