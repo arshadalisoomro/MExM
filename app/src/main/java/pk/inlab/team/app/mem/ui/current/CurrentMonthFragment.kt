@@ -135,10 +135,10 @@ class CurrentMonthFragment : Fragment(),
         val infoDialogView = binding.root
 
         // Set Current Item Weight
-        binding.mtvCurrentItemInfoWeight.text = item.purchaseWeight.toString()
+        binding.mtvCurrentItemInfoWeight.text = requireContext().getString(R.string.current_item_total_paos, item.purchaseWeight)
 
         // Set Current Item Date
-        binding.mtvCurrentItemInfoTime.text = time
+        binding.mtvCurrentItemInfoTime.text = requireContext().getString(R.string.current_item_purchase_time, time)
 
         // Set Current Item Description
         binding.mtvCurrentItemInfoDescription.text = item.purchaseDescription

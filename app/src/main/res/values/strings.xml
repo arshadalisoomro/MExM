@@ -27,6 +27,8 @@
     <!-- In Favor of total Expense formatted   -->
     <string name="total_month_expense">RS.%1$d/=</string>
     <string name="total_month_paos">Pao.%1$d</string>
+    <string name="current_item_total_paos">Pao.%1$d</string>
+    <string name="current_item_purchase_time">Time:%1$s</string>
     <string name="total_month_kgs">Kg.%1$.2f</string>
 
     <!-- Preference Titles -->
