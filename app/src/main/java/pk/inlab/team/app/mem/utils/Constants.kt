@@ -5,4 +5,8 @@ object Constants {
     const val COLLECTION_DAY_EXPENSE_ITEM = "day_expense_items"
 
     const val DAY_EXPENSE_TOTAL = "day_expense_total"
+
+    const val CURRENT_STATUS = "current_status"
+
+    val KEY_TOTAL_PAOS = "total_paos"
 }

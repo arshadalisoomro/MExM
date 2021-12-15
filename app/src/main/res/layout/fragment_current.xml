@@ -21,9 +21,9 @@
         android:id="@+id/llc_recyclerview_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="4dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,15 +37,17 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/pao"
+            android:textSize="@dimen/current_month_header_font_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/date"
+            android:textSize="@dimen/current_month_header_font_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
 
@@ -58,15 +60,17 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/pao"
+            android:textSize="@dimen/current_month_header_font_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/date"
+            android:textSize="@dimen/current_month_header_font_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
         <!--Second Column End-->
@@ -78,18 +82,42 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/pao"
+            android:textSize="@dimen/current_month_header_font_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/date"
+            android:textSize="@dimen/current_month_header_font_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
         <!--Third Column End-->
+
+        <!--Fourth Column Start-->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="@string/pao"
+            android:textSize="@dimen/current_month_header_font_size"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="@string/date"
+            android:textSize="@dimen/current_month_header_font_size"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+        <!--Fourth Column End-->
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -105,6 +133,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:spanCount="3" />
+        app:spanCount="4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

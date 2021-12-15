@@ -3,12 +3,10 @@ package pk.inlab.team.app.mem
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -132,7 +130,6 @@ class MainActivity : AppCompatActivity() {
                 uiScope.launch {
                     loadItems(currentRatePerKilo)
                 }
-                Log.e("#PREFS#", "Current value is = $it")
             })
         return currentRatePerKilo
 
@@ -184,11 +181,9 @@ class MainActivity : AppCompatActivity() {
         currentMonthViewModel.getAllItemsRealTime().collect {
             when(it){
                 is State.Loading -> {
-                    showToast(rootView, "Loading")
+                    // showToast(rootView, "Loading")
                 }
                 is State.Success -> {
-                    Log.e("__DATA__", it.data.toString())
-
                     var totalMonthWeightInPaos = 0
                     for (item in it.data){
                         totalMonthWeightInPaos += item.purchaseWeight
@@ -207,17 +202,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 is State.Failed -> {
-                    Log.e("__DATA__", it.message)
-                    showToast(rootView, "Failed!")
+                    // showToast(rootView, "Failed!")
                 }
             }
         }
 
     }
 
-    private fun showToast(root: View, message: String) {
-        Toast.makeText(root.context, message, Toast.LENGTH_SHORT).show()
-    }
 
     private fun showInputDialog() {
         // Through bindings
@@ -243,15 +234,14 @@ class MainActivity : AppCompatActivity() {
                     ).collect{
                         when(it){
                             is State.Loading -> {
-                                showToast(rootView, "Loading")
+
                             }
                             is State.Success -> {
                                 Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show()
                             }
                             is State.Failed -> {
-                                Log.e("__DATA__", it.message)
-                                showToast(rootView, "Failed to Save data")
+
                             }
                         }
                     }

@@ -31,7 +31,7 @@ class PurchaseItemRepository {
 
                 if (snapshot != null) {
                     // snapshot.documentChanges.get
-                    Log.e("DATA_ITEMS", snapshot.documents.toString())
+                    Log.e("PurchaseItemRepository", snapshot.documents.toString())
                     trySend(
 
                         State.success(snapshot.toObjectsWithId(PurchaseItem::class.java))

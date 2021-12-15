@@ -22,5 +22,7 @@
     <dimen name="vertical_gutters_half">12dp</dimen>
     <dimen name="vertical_gutters">24dp</dimen>
     <dimen name="current_status_container_bottom_margin">18dp</dimen>
+    <dimen name="current_item_font_size">30sp</dimen>
+    <dimen name="current_month_header_font_size">18sp</dimen>
 
 </resources>

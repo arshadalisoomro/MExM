@@ -2,11 +2,9 @@ package pk.inlab.team.app.mem.ui.current
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -16,7 +14,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pk.inlab.team.app.mem.R
@@ -76,7 +73,6 @@ class CurrentMonthFragment : Fragment(),
         // Launch coroutine
         uiScope.launch {
             loadItems(adapter)
-            delay(1500L)
         }
         return rootView
 
@@ -98,6 +94,8 @@ class CurrentMonthFragment : Fragment(),
 
     private suspend fun loadItems(adapter: CurrentMonthAdapter) {
         currentMonthViewModel.getAllItemsRealTime().collect {
+
+
             when(it){
                 is State.Loading -> {
                     if (!binding.lpiLoading.isShown) binding.lpiLoading.show()
@@ -218,7 +216,7 @@ class CurrentMonthFragment : Fragment(),
 
     private fun updateCurrentItem(
         purchaseItem: PurchaseItem,
-        binding: InputPurchaseItemBinding
+        bindingIPI: InputPurchaseItemBinding
     ) {
 
         // Launch coroutine
@@ -227,21 +225,21 @@ class CurrentMonthFragment : Fragment(),
                 PurchaseItem(
                     purchaseItem.id,
                     purchaseItem.purchaseTimeMilli,
-                    binding.tilDialogItemWeightInPaos.text.toString().toInt(),
-                    binding.tilDialogItemDescription.text.toString(),
+                    bindingIPI.tilDialogItemWeightInPaos.text.toString().toInt(),
+                    bindingIPI.tilDialogItemDescription.text.toString(),
                 )
             ).collect {
                 when (it) {
                     is State.Loading -> {
-                        showToast(rootView, "Loading")
+                        if (!binding.lpiLoading.isShown) binding.lpiLoading.show()
                     }
                     is State.Success -> {
                         Snackbar.make(rootView, "Item Updated", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show()
+                        if (binding.lpiLoading.isShown) binding.lpiLoading.hide()
                     }
                     is State.Failed -> {
-                        Log.e("__DATA__", it.message)
-                        showToast(rootView, "Failed to Save data")
+                        if (binding.lpiLoading.isShown) binding.lpiLoading.hide()
                     }
                 }
             }
@@ -272,10 +270,6 @@ class CurrentMonthFragment : Fragment(),
                 }
             }
         }
-    }
-
-    private fun showToast(root: View, message: String) {
-        Toast.makeText(root.context, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

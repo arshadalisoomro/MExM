@@ -3,7 +3,7 @@ package pk.inlab.team.app.mem.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,8 +25,6 @@ class CurrentMonthAdapter(
                 oldItem == newItem
         }
 ) {
-
-
 
     /**
      * Handles Single click on item for Info Dialog
@@ -53,19 +51,19 @@ class CurrentMonthAdapter(
 
         override fun onBindViewHolder(holder: CurrentMonth, position: Int) {
             val item = getItem(position)
-            holder.itemWeightInPaos.text = item.purchaseWeight.toString()
-            holder.itemPurchaseDate.text = convertLongToDate(item.purchaseTimeMilli)
+
+            // Set values to only one variable
+            val itemWithPaoAndDateText = "${item.purchaseWeight}-${convertLongToDate(item.purchaseTimeMilli)}"
+            holder.itemWeightInPaoPurchaseDate.text = itemWithPaoAndDateText
 
             // Click listener to show Info
             holder.itemContainer.setOnClickListener {
-                // showItemInfoDialog(context, item)
                 // Pass the Current Item for further process
                 onItemClickListener.onItemClick(item)
             }
 
             // Long Click listener to show Edit Delete Popup menu
             holder.itemContainer.setOnLongClickListener {
-                // showEditDeletePopUpMenu(rootView, it, R.menu.menu_pop_up)
                 // Pass the id of Current Item for further process
                 onItemLongClickListener.onItemLongClick(it, item)
                 return@setOnLongClickListener true
@@ -73,14 +71,11 @@ class CurrentMonthAdapter(
 
         }
 
-
-
     inner class CurrentMonth(binding: ItemCurrentBinding) :
             RecyclerView.ViewHolder(binding.root) {
 
-            val itemContainer: LinearLayoutCompat = binding.llcItemCurrentContainer
+            val itemContainer: ConstraintLayout = binding.llcItemCurrentContainer
 
-            val itemWeightInPaos: MaterialTextView = binding.mtvItemPaos
-            val itemPurchaseDate: MaterialTextView = binding.mtvItemPurchaseDate
+            val itemWeightInPaoPurchaseDate: MaterialTextView = binding.mtvItemCurrentPaoDate
         }
     }
