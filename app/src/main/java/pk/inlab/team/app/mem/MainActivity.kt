@@ -30,6 +30,8 @@ import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.current.CurrentMonthViewModel
 import pk.inlab.team.app.mem.ui.current.CurrentViewModelFactory
 import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER_KILO
+import pk.inlab.team.app.mem.ui.views.DataPoint
+import pk.inlab.team.app.mem.ui.views.LineGraphChart
 import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
@@ -42,6 +44,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var rootView: View
     private lateinit var navController: NavController
+
+    // currentMonthLineGraphChart
+    private lateinit var mCurrentMonthLineGraphChart: LineGraphChart
 
     private lateinit var preferences: SharedPreferences
     private lateinit var liveSharedPreferences: LiveSharedPreferences
@@ -61,6 +66,9 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        // Current Month line Graph Chart
+        mCurrentMonthLineGraphChart = binding.currentMonthLineGraphChart
+
         // In favor of androidx.fragment.app.FragmentContainerView in XML file
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
@@ -74,16 +82,28 @@ class MainActivity : AppCompatActivity() {
                 if (currentFragment == R.id.nav_current) {
                     // Show Fab on Current Month fragment
                     binding.fab.visibility = View.VISIBLE
+
+                    binding.llcCurrentStatusContainer.visibility = View.VISIBLE
+                    mCurrentMonthLineGraphChart.visibility = View.GONE
                 }
 
                 if (currentFragment == R.id.nav_history) {
                     // Hide Fab on History fragment
                     binding.fab.visibility = View.GONE
+
+                    binding.llcCurrentStatusContainer.visibility = View.GONE
+
+                    mCurrentMonthLineGraphChart.setCurveBorderColor(R.color.teal_200)
+                    mCurrentMonthLineGraphChart.addDataPoints(getRandomPoints())
+                    mCurrentMonthLineGraphChart.visibility = View.VISIBLE
                 }
 
                 if (currentFragment == R.id.nav_settings) {
                     // Hide Fab on Settings fragment
                     binding.fab.visibility = View.GONE
+
+                    binding.llcCurrentStatusContainer.visibility = View.VISIBLE
+                    mCurrentMonthLineGraphChart.visibility = View.GONE
                 }
 
             }
@@ -125,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         liveSharedPreferences
             .getString(KEY_RATE_PER_KILO, "-1")
             .observe(this, {
-                currentRatePerKilo = it?.toInt()!!
+                try{currentRatePerKilo = it?.toInt()!!}catch(ex: Exception){}finally { currentRatePerKilo = 120}
                 // Launch Coroutine
                 uiScope.launch {
                     loadItems(currentRatePerKilo)
@@ -245,28 +265,6 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-
-//                    currentMonthViewModel.addNewItem(
-//                        PurchaseItem(
-//                            UUID.randomUUID().toString(),
-//                            Date().time,
-//                            binding.tilDialogItemWeightInPaos.text.toString().toInt(),
-//                            binding.tilDialogItemDescription.text.toString(),
-//                        )
-//                    ).collect{
-//                        when(it){
-//                            is State.Loading -> {
-//
-//                            }
-//                            is State.Success -> {
-//                                Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
-//                                    .setAction("Action", null).show()
-//                            }
-//                            is State.Failed -> {
-//
-//                            }
-//                        }
-//                    }
                 }
 
             }
@@ -275,6 +273,16 @@ class MainActivity : AppCompatActivity() {
                 // Just Placeholder
             }
             .show()
+    }
+
+    private fun getRandomPoints(): MutableList<DataPoint> {
+        val list = mutableListOf<DataPoint>()
+        val range = (0..10)
+
+        (1..10).forEach { _ ->
+            list.add(DataPoint(range.random()*100f))
+        }
+        return list
     }
 
 }
