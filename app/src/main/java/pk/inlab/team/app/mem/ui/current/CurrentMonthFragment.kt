@@ -135,10 +135,10 @@ class CurrentMonthFragment : Fragment(),
         val infoDialogView = binding.root
 
         // Set Current Item Weight
-        binding.mtvCurrentItemInfoWeight.text = requireContext().getString(R.string.current_item_total_paos, item.purchaseWeight)
+        binding.mtvCurrentItemInfoWeight.text = requireContext().resources.getString(R.string.current_item_total_paos, item.purchaseWeight)
 
         // Set Current Item Date
-        binding.mtvCurrentItemInfoTime.text = requireContext().getString(R.string.current_item_purchase_time, time)
+        binding.mtvCurrentItemInfoTime.text = requireContext().resources.getString(R.string.current_item_purchase_time, time)
 
         // Set Current Item Description
         binding.mtvCurrentItemInfoDescription.text = item.purchaseDescription
@@ -200,7 +200,7 @@ class CurrentMonthFragment : Fragment(),
 
         MaterialAlertDialogBuilder(requireContext())
             .setCancelable(false)
-            .setTitle(resources.getString(R.string.new_item))
+            .setTitle(requireContext().resources.getString(R.string.new_item))
             .setView(inputAlertDialogView)
             .setPositiveButton(resources.getString(R.string.save))
             { /*dialog*/ _ , /*which*/ _ ->

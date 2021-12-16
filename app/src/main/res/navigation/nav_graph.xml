@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_HistoryFragment_to_CurrentFragment"
             app:destination="@id/nav_current" />
+        <action
+            android:id="@+id/action_HistoryFragment_to_SettingsFragment"
+            app:destination="@id/nav_settings" />
     </fragment>
 
     <fragment
@@ -39,5 +42,8 @@
         <action
             android:id="@+id/action_SettingsFragment_to_CurrentFragment"
             app:destination="@id/nav_current" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_HistoryFragment"
+            app:destination="@id/nav_history" />
     </fragment>
 </navigation>

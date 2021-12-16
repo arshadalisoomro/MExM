@@ -29,13 +29,16 @@ import pk.inlab.team.app.mem.model.PurchaseItem
 import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.current.CurrentMonthViewModel
 import pk.inlab.team.app.mem.ui.current.CurrentViewModelFactory
+import pk.inlab.team.app.mem.ui.history.HistoryFragmentDirections
 import pk.inlab.team.app.mem.ui.settings.SettingsFragment.Companion.KEY_RATE_PER_KILO
+import pk.inlab.team.app.mem.ui.settings.SettingsFragmentDirections
 import pk.inlab.team.app.mem.ui.views.DataPoint
 import pk.inlab.team.app.mem.ui.views.LineGraphChart
 import pk.inlab.team.app.mem.utils.DateUtils
 import pk.inlab.team.app.mem.utils.State
 import pk.inlab.team.app.mem.utils.liveprefs.LiveSharedPreferences
 import java.util.*
+import kotlin.properties.Delegates
 
 
 class MainActivity : AppCompatActivity() {
@@ -57,6 +60,9 @@ class MainActivity : AppCompatActivity() {
     // Coroutine Scope
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
+    // Reference to Current Destination in Navigation
+    private var currentFragment by Delegates.notNull<Int>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -77,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { /*controller*/ _, destination, /*arguments*/ _ ->
             run {
-                val currentFragment = destination.id
+                currentFragment = destination.id
 
                 if (currentFragment == R.id.nav_current) {
                     // Show Fab on Current Month fragment
@@ -145,7 +151,9 @@ class MainActivity : AppCompatActivity() {
         liveSharedPreferences
             .getString(KEY_RATE_PER_KILO, "-1")
             .observe(this, {
-                try{currentRatePerKilo = it?.toInt()!!}catch(ex: Exception){}finally { currentRatePerKilo = 120}
+                try{
+                    currentRatePerKilo = if (it.isNotEmpty()) it.toInt() else 120
+                }catch(ex: Exception){}
                 // Launch Coroutine
                 uiScope.launch {
                     loadItems(currentRatePerKilo)
@@ -167,14 +175,33 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_history -> {
-                findNavController(R.id.nav_host_fragment_content_main)
-                    .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToHistoryFragment())
+
+                if (currentFragment == R.id.nav_current) {
+                    findNavController(R.id.nav_host_fragment_content_main)
+                        .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToHistoryFragment())
+                }
+
+                if (currentFragment == R.id.nav_settings) {
+                    findNavController(R.id.nav_host_fragment_content_main)
+                        .safeNavigate(SettingsFragmentDirections.actionSettingsFragmentToHistoryFragment())
+                }
+
 
                 return true
             }
+
             R.id.action_settings -> {
-                findNavController(R.id.nav_host_fragment_content_main)
-                    .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToSettingsFragment())
+
+                if (currentFragment == R.id.nav_current) {
+                    findNavController(R.id.nav_host_fragment_content_main)
+                        .safeNavigate(CurrentMonthFragmentDirections.actionCurrentFragmentToSettingsFragment())
+                }
+
+                if (currentFragment == R.id.nav_history) {
+                    findNavController(R.id.nav_host_fragment_content_main)
+                        .safeNavigate(HistoryFragmentDirections.actionHistoryFragmentToSettingsFragment())
+                }
+
                 return true
             }
             R.id.action_about -> {

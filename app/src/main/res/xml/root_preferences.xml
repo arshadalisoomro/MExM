@@ -6,6 +6,7 @@
             app:key="rate_per_kilo"
             app:title="@string/rate_title"
             app:useSimpleSummaryProvider="true"
+            app:defaultValue="120"
             />
 
     </PreferenceCategory>
