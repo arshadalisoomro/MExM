@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -219,60 +220,76 @@ class MainActivity : AppCompatActivity(), CurrentMonthFragment.OnDataPass {
 
         // Get View from binding
         val inputAlertDialogView = binding.root
-        // (height == null || height.trim().equal("") ? 0 : Integer.parseInt(height))
-        // Get Input as String
-        val inputWeightInPaosAsString = binding.tilDialogItemWeightInPaos.text.toString()
-        val inputWeightInPaos = getValidInput(inputWeightInPaosAsString)
+
         val inputDescription = binding.tilDialogItemDescription.text.toString()
 
-        MaterialAlertDialogBuilder(this)
+        val dialog = MaterialAlertDialogBuilder(this)
             .setCancelable(false)
             .setTitle(resources.getString(R.string.new_item))
             .setView(inputAlertDialogView)
             .setPositiveButton(resources.getString(R.string.save))
             { /*dialog*/ _ , /*which*/ _ ->
-                uiScope.launch {
-                    if (inputWeightInPaos <= 0){
-                        // Set error message
-                        binding.tilDialogItemWeightInPaos.error = getString(R.string.error_invalid_input)
-                    } else {
-                        // Remove error message
-                        binding.tilDialogItemWeightInPaos.error = null
-                        currentMonthViewModel.addNewItemToCurrentMonth(
-                            PurchaseItem(
-                                UUID.randomUUID().toString(),
-                                Date().time,
-                                inputWeightInPaos,
-                                inputDescription,
-                            )
-                        ).collect{
-                            when(it){
-                                is State.Loading -> {
-
-                                }
-                                is State.Success -> {
-                                    Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show()
-                                }
-                                is State.Failed -> {
-
-                                }
-                            }
-                        }
-                    }
-                }
-
+                //Do nothing here because we override this button later to change the close behaviour.
+                //However, we still need this because on older versions of Android unless we
+                //pass a handler the button doesn't get instantiated
             }
             .setNegativeButton(resources.getString(R.string.cancel))
-            {  /*dialog*/ _ , /*which*/ _ ->
-                // Just Placeholder
+            {  dialog , /*which*/ _ ->
+                // Dismiss Dialog
+                dialog.dismiss()
             }
             .show()
+        //Overriding the handler immediately after show as described below
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+
+            // To avoid Number format Exception
+            val inputWeightInPaos: Int = try {
+                binding.tilDialogItemWeightInPaos.text.toString().toInt()
+            } catch (ex: Exception) {
+                0
+            }
+
+            if (inputWeightInPaos <= 0){
+                // Set error message
+                binding.tilDialogItemWeightInPaos.error = getString(R.string.error_invalid_input)
+            } else {
+                // Remove error message
+                binding.tilDialogItemWeightInPaos.error = null
+                // Call save item
+                saveNeItem(
+                    PurchaseItem(
+                        UUID.randomUUID().toString(),
+                        Date().time,
+                        inputWeightInPaos,
+                        inputDescription,
+                    ),
+                    dialog
+                )
+            }
+        }
     }
-    // Validate Input
-    private fun getValidInput(inputWeightInPaosAsString: String): Int {
-        return if (inputWeightInPaosAsString.isEmpty() || inputWeightInPaosAsString.trim() == "") 0
-        else inputWeightInPaosAsString.toInt()
+
+    private fun saveNeItem(purchaseItem: PurchaseItem, dialog: AlertDialog) {
+        uiScope.launch{
+            currentMonthViewModel.addNewItemToCurrentMonth(
+                purchaseItem
+            ).collect{
+                when(it){
+                    is State.Loading -> {
+
+                    }
+                    is State.Success -> {
+                        Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show()
+                        // Dialog must br dismissed
+                        dialog.dismiss()
+                    }
+                    is State.Failed -> {
+
+                    }
+                }
+            }
+        }
     }
 
     private fun getRandomPoints(): MutableList<DataPoint> {
