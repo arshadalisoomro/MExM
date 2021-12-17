@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import pk.inlab.team.app.mem.databinding.ActivityMainBinding
 import pk.inlab.team.app.mem.databinding.InputPurchaseItemBinding
 import pk.inlab.team.app.mem.model.PurchaseItem
+import pk.inlab.team.app.mem.ui.current.CurrentMonthFragment
 import pk.inlab.team.app.mem.ui.current.CurrentMonthFragmentDirections
 import pk.inlab.team.app.mem.ui.current.CurrentMonthViewModel
 import pk.inlab.team.app.mem.ui.current.CurrentViewModelFactory
@@ -41,7 +42,7 @@ import java.util.*
 import kotlin.properties.Delegates
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CurrentMonthFragment.OnDataPass {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -134,30 +135,21 @@ class MainActivity : AppCompatActivity() {
         // Set Current Month and Year
         binding.mtvMilkExpenseMonthYear.text = DateUtils.getToday()
 
-        // Call Prefs Change Listener
-        getCurrentRateFromPrefs()
-
     }
 
-    private fun getCurrentRateFromPrefs() {
+    private fun getCurrentRateFromPrefs(): Int {
+        // Init Current rate
+        var currentRatePerKilo = 0
+
         // enter the key from your xml and the default value
         liveSharedPreferences
             .getString(KEY_RATE_PER_KILO, "-1")
             .observe(this, {
-                // Try to Get Values from prefs
                 try{
-                    // Check if Prefs value is not Null/Empty
-                    if (it.isNotEmpty()){
-                        // If values is present then value must be Greater than Int 0
-                        if (it.toInt() > 0){
-                            // Launch Coroutine
-                            uiScope.launch {
-                                loadItems(it.toInt())
-                            }
-                        }
-                    }
+                    currentRatePerKilo = if (it.isNotEmpty()) it.toInt() else 120
                 }catch(ex: Exception){}
             })
+        return currentRatePerKilo
 
     }
 
@@ -183,7 +175,6 @@ class MainActivity : AppCompatActivity() {
                     findNavController(R.id.nav_host_fragment_content_main)
                         .safeNavigate(SettingsFragmentDirections.actionSettingsFragmentToHistoryFragment())
                 }
-
 
                 return true
             }
@@ -221,39 +212,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
-
-    private suspend fun loadItems(currentRatePerKilo: Int) {
-        currentMonthViewModel.getAllItemsOfCurrentMonth().collect {
-            when(it){
-                is State.Loading -> {
-                    // showToast(rootView, "Loading")
-                }
-                is State.Success -> {
-                    var totalMonthWeightInPaos = 0
-                    for (item in it.data){
-                        totalMonthWeightInPaos += item.purchaseWeight
-                    }
-
-                    if (currentRatePerKilo >= 0){
-                        // Set value of Paos as Int
-                        binding.mtvMilkMonthTotalPaos.text = getString(R.string.total_month_paos, totalMonthWeightInPaos)
-
-                        val totalMonthWeightInKgs = (totalMonthWeightInPaos/4.0)
-                        val totalMonthExpenseValue = totalMonthWeightInKgs * currentRatePerKilo
-                        // Set Values to views
-                        binding.mtvMilkTotalMonthExpense.text = getString(R.string.total_month_expense, totalMonthExpenseValue.toInt())
-
-                        binding.mtvMilkMonthTotalKilos.text = getString(R.string.total_month_kgs, totalMonthWeightInKgs)
-                    }
-                }
-                is State.Failed -> {
-                    // showToast(rootView, "Failed!")
-                }
-            }
-        }
-
-    }
-
 
     private fun showInputDialog() {
         // Through bindings
@@ -308,6 +266,27 @@ class MainActivity : AppCompatActivity() {
             list.add(DataPoint(range.random()*100f))
         }
         return list
+    }
+
+    // Finally, in your activity implements OnDataPass to Get List of PurchaseItems
+    override fun onDataPass(data: List<PurchaseItem>) {
+        var totalMonthWeightInPaos = 0
+        data.forEach {
+            totalMonthWeightInPaos += it.purchaseWeight
+        }
+
+        if (getCurrentRateFromPrefs() >= 0){
+            // Set value of Paos as Int
+            binding.mtvMilkMonthTotalPaos.text = getString(R.string.total_month_paos, totalMonthWeightInPaos)
+
+            val totalMonthWeightInKgs = (totalMonthWeightInPaos/4.0)
+            val totalMonthExpenseValue = totalMonthWeightInKgs * getCurrentRateFromPrefs()
+            // Set Values to views
+            binding.mtvMilkTotalMonthExpense.text = getString(R.string.total_month_expense, totalMonthExpenseValue.toInt())
+
+            binding.mtvMilkMonthTotalKilos.text = getString(R.string.total_month_kgs, totalMonthWeightInKgs)
+        }
+
     }
 
 }

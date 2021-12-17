@@ -1,6 +1,7 @@
 package pk.inlab.team.app.mem.ui.current
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +37,14 @@ class CurrentMonthFragment : Fragment(),
     CurrentMonthAdapter.OnItemClickListener,
     CurrentMonthAdapter.OnItemLongClickListener
 {
+
+    // Pass data from CurrentFragment to MainActivity to avoid Extra Call to FireStore
+    interface OnDataPass {
+        fun onDataPass(data: List<PurchaseItem>)
+    }
+
+    private lateinit var dataPasser: OnDataPass
+
 
     private lateinit var currentMonthViewModel: CurrentMonthViewModel
     private var _binding: FragmentCurrentBinding? = null
@@ -78,6 +87,12 @@ class CurrentMonthFragment : Fragment(),
 
     }
 
+    // connect the containing class' implementation of the interface to the fragment
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        dataPasser = context as OnDataPass
+    }
+
     private fun setGridItemDecorator(recyclerView: RecyclerView) {
         // Set Grid Item Divider
         val horizontalDivider = ContextCompat.getDrawable(requireContext(), R.drawable.item_divider)
@@ -103,6 +118,10 @@ class CurrentMonthFragment : Fragment(),
                 is State.Success -> {
                     // Submit data to adapter
                     adapter.submitList(it.data)
+
+                    // to handle the passing of data, just call it on the dataPasser object
+                    dataPasser.onDataPass(it.data)
+
 
                     // List is not empty or less than or Equal to 3 items then set setGridItemDecorator
                     if(it.data.isNotEmpty() && it.data.size >= 3) setGridItemDecorator(recyclerView)
