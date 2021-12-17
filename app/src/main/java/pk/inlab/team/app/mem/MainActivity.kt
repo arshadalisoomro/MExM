@@ -107,8 +107,9 @@ class MainActivity : AppCompatActivity() {
                 if (currentFragment == R.id.nav_settings) {
                     // Hide Fab on Settings fragment
                     binding.fab.visibility = View.GONE
-
-                    binding.llcCurrentStatusContainer.visibility = View.VISIBLE
+                    
+                    //Hide Current Status Container in Settings Fragment
+                    binding.llcCurrentStatusContainer.visibility = View.GONE
                     mCurrentMonthLineGraphChart.visibility = View.GONE
                 }
 
@@ -133,33 +134,30 @@ class MainActivity : AppCompatActivity() {
         // Set Current Month and Year
         binding.mtvMilkExpenseMonthYear.text = DateUtils.getToday()
 
+        // Call Prefs Change Listener
+        getCurrentRateFromPrefs()
+
     }
 
-    override fun onResumeFragments() {
-        super.onResumeFragments()
-        // Launch Coroutine
-        uiScope.launch {
-            loadItems(getCurrentRateFromPrefs())
-        }
-    }
-
-    private fun getCurrentRateFromPrefs(): Int {
-        // Init Current rate
-        var currentRatePerKilo = 0
-
+    private fun getCurrentRateFromPrefs() {
         // enter the key from your xml and the default value
         liveSharedPreferences
             .getString(KEY_RATE_PER_KILO, "-1")
             .observe(this, {
+                // Try to Get Values from prefs
                 try{
-                    currentRatePerKilo = if (it.isNotEmpty()) it.toInt() else 120
+                    // Check if Prefs value is not Null/Empty
+                    if (it.isNotEmpty()){
+                        // If values is present then value must be Greater than Int 0
+                        if (it.toInt() > 0){
+                            // Launch Coroutine
+                            uiScope.launch {
+                                loadItems(it.toInt())
+                            }
+                        }
+                    }
                 }catch(ex: Exception){}
-                // Launch Coroutine
-                uiScope.launch {
-                    loadItems(currentRatePerKilo)
-                }
             })
-        return currentRatePerKilo
 
     }
 
