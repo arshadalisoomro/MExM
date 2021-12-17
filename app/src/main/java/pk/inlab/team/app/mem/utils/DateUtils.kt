@@ -77,10 +77,12 @@ class DateUtils {
         fun getCurrentMonthWithStartEndDate(): String {
             return SimpleDateFormat("MMM", locale)
                 .format(Calendar.getInstance().time).uppercase(locale) +
-                    "_" + min() + "_" + max() +
-                    "_" + Calendar.getInstance()[Calendar.YEAR]
+                    "_" + min() + "_" + max()
         }
 
+        fun getCurrentYear(): String {
+            return Calendar.getInstance()[Calendar.YEAR].toString()
+        }
 
         fun getDate(date: Date): String? {
             return SimpleDateFormat("dd", locale)

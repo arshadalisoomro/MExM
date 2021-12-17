@@ -17,10 +17,15 @@ import pk.inlab.team.app.mem.utils.toObjectsWithId
 
 class CurrentMonthPurchaseRepository {
 
-    var currentMonthWithStartAndEndDate = DateUtils.getCurrentMonthWithStartEndDate()
+    // Main Document for Each Year
+    private var currentYear = DateUtils.getCurrentYear()
+
+    // Separate Collections for Each Month of Each Year
+    private var currentMonthWithStartAndEndDate = DateUtils.getCurrentMonthWithStartEndDate()
+
     private val mCurrentMonthPurchaseItemsCollection = FirebaseFirestore.getInstance()
                                                             .collection(Constants.COLLECTION_PURCHASE_ITEM)
-                                                            .document(currentMonthWithStartAndEndDate)
+                                                            .document(currentYear)
                                                             .collection(currentMonthWithStartAndEndDate)
     /**
      * Returns ProducerScope of [State] which retrieves all PurchaseItems from cloud firestore collection.
