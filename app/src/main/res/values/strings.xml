@@ -40,4 +40,5 @@
     <string name="settings_fragment_label">Settings</string>
     <string name="action_about">About</string>
     <string name="title_about">About</string>
+    <string name="error_invalid_input">Enter valid value</string>
 </resources>

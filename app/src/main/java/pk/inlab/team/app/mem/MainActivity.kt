@@ -219,6 +219,11 @@ class MainActivity : AppCompatActivity(), CurrentMonthFragment.OnDataPass {
 
         // Get View from binding
         val inputAlertDialogView = binding.root
+        // (height == null || height.trim().equal("") ? 0 : Integer.parseInt(height))
+        // Get Input as String
+        val inputWeightInPaosAsString = binding.tilDialogItemWeightInPaos.text.toString()
+        val inputWeightInPaos = getValidInput(inputWeightInPaosAsString)
+        val inputDescription = binding.tilDialogItemDescription.text.toString()
 
         MaterialAlertDialogBuilder(this)
             .setCancelable(false)
@@ -227,24 +232,31 @@ class MainActivity : AppCompatActivity(), CurrentMonthFragment.OnDataPass {
             .setPositiveButton(resources.getString(R.string.save))
             { /*dialog*/ _ , /*which*/ _ ->
                 uiScope.launch {
-                    currentMonthViewModel.addNewItemToCurrentMonth(
-                        PurchaseItem(
-                            UUID.randomUUID().toString(),
-                            Date().time,
-                            binding.tilDialogItemWeightInPaos.text.toString().toInt(),
-                            binding.tilDialogItemDescription.text.toString(),
-                        )
-                    ).collect{
-                        when(it){
-                            is State.Loading -> {
+                    if (inputWeightInPaos <= 0){
+                        // Set error message
+                        binding.tilDialogItemWeightInPaos.error = getString(R.string.error_invalid_input)
+                    } else {
+                        // Remove error message
+                        binding.tilDialogItemWeightInPaos.error = null
+                        currentMonthViewModel.addNewItemToCurrentMonth(
+                            PurchaseItem(
+                                UUID.randomUUID().toString(),
+                                Date().time,
+                                inputWeightInPaos,
+                                inputDescription,
+                            )
+                        ).collect{
+                            when(it){
+                                is State.Loading -> {
 
-                            }
-                            is State.Success -> {
-                                Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show()
-                            }
-                            is State.Failed -> {
+                                }
+                                is State.Success -> {
+                                    Snackbar.make(rootView, "New Item Saved", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show()
+                                }
+                                is State.Failed -> {
 
+                                }
                             }
                         }
                     }
@@ -256,6 +268,11 @@ class MainActivity : AppCompatActivity(), CurrentMonthFragment.OnDataPass {
                 // Just Placeholder
             }
             .show()
+    }
+    // Validate Input
+    private fun getValidInput(inputWeightInPaosAsString: String): Int {
+        return if (inputWeightInPaosAsString.isEmpty() || inputWeightInPaosAsString.trim() == "") 0
+        else inputWeightInPaosAsString.toInt()
     }
 
     private fun getRandomPoints(): MutableList<DataPoint> {

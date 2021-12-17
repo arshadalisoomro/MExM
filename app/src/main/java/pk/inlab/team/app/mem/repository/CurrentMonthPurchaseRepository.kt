@@ -1,6 +1,5 @@
 package pk.inlab.team.app.mem.repository
 
-import android.util.Log
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -38,8 +37,6 @@ class CurrentMonthPurchaseRepository {
             .addSnapshotListener { snapshot, exception ->
 
                 if (snapshot != null) {
-                    // snapshot.documentChanges.get
-                    Log.e("PurchaseItemRepository", snapshot.documents.toString())
                     trySend(
                         State.success(snapshot.toObjectsWithId(PurchaseItem::class.java))
                     )
